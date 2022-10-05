@@ -1,7 +1,7 @@
 name: whisper_dart
-description: A sample command-line application.
-version: 1.0.0
-# homepage: https://www.example.com
+description: Open ai library whisper unofficial for recognition audio to text without heavy gpu, support server side and client side.
+version: 0.0.0
+homepage: https://www.example.com
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
@@ -15,3 +15,4 @@ dev_dependencies:
 dependencies:
   ffi: ^2.0.1
   galaxeus_lib: ^0.0.8
+  universal_io: ^2.0.4

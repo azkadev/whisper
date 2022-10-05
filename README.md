@@ -5,7 +5,7 @@ Whisper library speech to text offline,
 ## Refrence
 1. [Whisper-Official](https://github.com/openai/whisper)
 2. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
-   
+
 ## Install
 
 ```bash
@@ -22,14 +22,17 @@ bash ./download-ggml-model.sh base.en
 ./compile.sh
 ```
 
+## Tested on
+1. OS: Ubuntu 20.4
+   CPU: Amd Ryzen 5500u
+   Ram: 8gb
+
 ## Testing
 ```dart
 import 'dart:convert';
 import 'dart:ffi';
-
 import 'package:ffi/ffi.dart';
 import 'package:whisper_dart/whisper_dart.dart';
-
 void main(List<String> arguments) {
   Whisper whisper = Whisper(whisperLib: "path_to/whisper.so");
   print(whisper.test);
@@ -38,7 +41,10 @@ void main(List<String> arguments) {
 
 result
 ```json
-{"@type":"ok","text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."}
+{
+  "@type":"ok",
+  "text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+}
 ```
 
 Language Support 

@@ -5,3 +5,5 @@
 # Conventional directory for build output.
 build/
 whisper.cpp/
+models/
+samples/

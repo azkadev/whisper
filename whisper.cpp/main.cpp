@@ -814,7 +814,7 @@ struct whisper_model
 //
 bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_vocab &vocab)
 {
-    //printf("%s: loading model from '%s'\n", __func__, fname.c_str());
+    // printf("%s: loading model from '%s'\n", __func__, fname.c_str());
 
     auto fin = std::ifstream(fname, std::ios::binary);
     if (!fin)
@@ -900,7 +900,7 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
             g_buf_compute.size() +
             g_buf_compute_layer.size();
 
-        //printf("%s: mem_required  = %.2f MB\n", __func__, mem_required / 1024.0 / 1024.0);
+        // printf("%s: mem_required  = %.2f MB\n", __func__, mem_required / 1024.0 / 1024.0);
     }
 
     // load mel filters
@@ -953,7 +953,7 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
 
         if (n_vocab < model.hparams.n_vocab)
         {
-            //printf("%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
+            // printf("%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
             for (int i = n_vocab; i < model.hparams.n_vocab; i++)
             {
                 if (i > vocab.token_beg)
@@ -1113,7 +1113,7 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
 
         ctx_size += (15 + 15 * n_audio_layer + 24 * n_text_layer) * 256; // object overhead
 
-        //printf("%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size / (1024.0 * 1024.0));
+        // printf("%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size / (1024.0 * 1024.0));
     }
 
     // create the ggml context
@@ -1359,7 +1359,7 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
             ggml_nbytes(model.memory_k) + ggml_nbytes(model.memory_v) +
             ggml_nbytes(model.memory_cross_k) + ggml_nbytes(model.memory_cross_v);
 
-        //printf("%s: memory size = %8.2f MB \n", __func__, memory_size / 1024.0 / 1024.0);
+        // printf("%s: memory size = %8.2f MB \n", __func__, memory_size / 1024.0 / 1024.0);
     }
 
     // load weights
@@ -1427,7 +1427,7 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
             total_size += ggml_nbytes(tensor);
         }
 
-        //printf("%s: model size  = %8.2f MB\n", __func__, total_size / 1024.0 / 1024.0);
+        // printf("%s: model size  = %8.2f MB\n", __func__, total_size / 1024.0 / 1024.0);
     }
 
     fin.close();
@@ -2523,21 +2523,21 @@ std::string to_timestamp(int64_t t)
 
     return std::string(buf);
 }
+
 extern "C" void play()
 {
     std::cout << "azka" << std::endl;
 }
-extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
-{
-    char **argv = {NULL};
 
+extern "C" std::string raw_transcribe(int argc, char **argv, bool isLog = false)
+{
     const int64_t t_main_start_us = ggml_time_us();
 
     whisper_params params;
 
     if (whisper_params_parse(argc, argv, params) == false)
     {
-        return "";
+        return "{\"@type\": \"error\"}";
     }
 
     if (params.seed < 0)
@@ -2566,7 +2566,7 @@ extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
         {
             fprintf(stderr, "%s: failed to load model from '%s'\n", __func__, params.model.c_str());
             whisper_print_usage(argc, argv, {});
-            return "";
+            return "{\"@type\": \"error\"}";
         }
 
         t_load_us = ggml_time_us() - t_start_us;
@@ -2638,22 +2638,22 @@ extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
 
     // print some info about the processing
     {
-   //     printf("\n");
+        //     printf("\n");
         if (!vocab.is_multilingual())
         {
             if (params.language != "en" || params.translate)
             {
                 params.language = "en";
                 params.translate = false;
-           //     printf("%s: WARNING: model is not multilingual, ignoring language and translation options\n", __func__);
+                //     printf("%s: WARNING: model is not multilingual, ignoring language and translation options\n", __func__);
             }
         }
-   //     printf("%s: processing %d samples (%.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
-            //    __func__, int(pcmf32.size()), float(pcmf32.size()) / SAMPLE_RATE, params.n_threads,
-            //    g_lang.at(params.language).second.c_str(),
-            //    params.translate ? "translate" : "transcribe",
-            //    params.no_timestamps ? 0 : 1);
-   //     printf("\n");
+        //     printf("%s: processing %d samples (%.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
+        //    __func__, int(pcmf32.size()), float(pcmf32.size()) / SAMPLE_RATE, params.n_threads,
+        //    g_lang.at(params.language).second.c_str(),
+        //    params.translate ? "translate" : "transcribe",
+        //    params.no_timestamps ? 0 : 1);
+        //     printf("\n");
     }
 
     // the accumulated text context so far
@@ -2838,13 +2838,13 @@ extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
                     {
                         if (params.no_timestamps)
                         {
-                       //     printf("%s", text.c_str());
+                            //     printf("%s", text.c_str());
                             fflush(stdout);
                         }
                         else
                         {
                             res_transcribe += text;
-                       //     printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text.c_str());
+                            //     printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text.c_str());
                         }
                     }
                     text = "";
@@ -2860,7 +2860,7 @@ extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
             if (!text.empty())
             {
                 res_transcribe += text;
-           //     printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(seek + seek_delta).c_str(), text.c_str());
+                //     printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(seek + seek_delta).c_str(), text.c_str());
             }
         }
 
@@ -2902,11 +2902,18 @@ extern "C" std::string transcribe(int argc, char **arv, bool isLog = false)
     ////     printf("%s:   encode time = %8.2f ms / %.2f ms per layer\n", __func__, t_encode_us / 1000.0f, t_encode_us / 1000.0f / model.hparams.n_audio_layer);
     ////     printf("%s:   decode time = %8.2f ms\n", __func__, t_decode_us / 1000.0f);
     ////     printf("%s:    total time = %8.2f ms\n", __func__, (t_main_end_us - t_main_start_us) / 1000.0f);
-    // }
+    // } 
 
     ggml_free(model.ctx);
 
-    return "{\"@type\": \"ok\", \"text\": \"" + res_transcribe + "\"}";
+    return "{\"@type\": \"transcribe\", \"text\": \"" + res_transcribe + "\"}";
+}
+extern "C" char *transcribe(int argc, char **argv, bool isLog = false)
+{
+    std::string result = raw_transcribe(argc, argv, isLog);
+    char *ch = new char[result.size() + 1];
+    strcpy(ch, result.c_str());
+    return ch;
 }
 
 int main(int argc, char **argv)
@@ -2923,9 +2930,10 @@ extern "C" void test()
     printf("%s\n", result.c_str());
 }
 
- extern "C" char* getString() {  
+extern "C" char *getString()
+{
     std::string result = transcribe(1, {NULL});
-    char* ch = new char[result.size() + 1] /* 11 = len of Hello Heap + 1 char for \0*/;
+    char *ch = new char[result.size() + 1] /* 11 = len of Hello Heap + 1 char for \0*/;
     strcpy(ch, result.c_str());
     return ch;
 }
