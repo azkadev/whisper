@@ -21,3 +21,7 @@ result
 ```json
 {"@type":"ok","text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."}
 ```
+
+Language Support 
+
+![](https://github.com/openai/whisper/raw/main/language-breakdown.svg)
