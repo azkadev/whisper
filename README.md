@@ -2,6 +2,9 @@
 
 Whisper library speech to text offline, 
 
+## Refrence
+1. [Whisper-Official](https://github.com/openai/whisper)
+2. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
 
 ## Testing
 ```dart
