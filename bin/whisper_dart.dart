@@ -10,7 +10,7 @@ void main(List<String> arguments) {
   DynamicLibrary openLib = whisper.openLib;
   try {
     var res = whisper.transcribe(
-      args: WhisperArgs("-f ./samples/jfk.wav".split(" ")),
+      args: WhisperArgs("-m models/ggml-small.bin -f samples/output.wav --language id".split(" ")),
     );
     print(res.toString());
   } catch (e) {

@@ -877,18 +877,18 @@ bool whisper_model_load(const std::string &fname, whisper_model &model, whisper_
             model.type = e_model::MODEL_LARGE;
         }
 
-        printf("%s: n_vocab       = %d\n", __func__, hparams.n_vocab);
-        printf("%s: n_audio_ctx   = %d\n", __func__, hparams.n_audio_ctx);
-        printf("%s: n_audio_state = %d\n", __func__, hparams.n_audio_state);
-        printf("%s: n_audio_head  = %d\n", __func__, hparams.n_audio_head);
-        printf("%s: n_audio_layer = %d\n", __func__, hparams.n_audio_layer);
-        printf("%s: n_text_ctx    = %d\n", __func__, hparams.n_text_ctx);
-        printf("%s: n_text_state  = %d\n", __func__, hparams.n_text_state);
-        printf("%s: n_text_head   = %d\n", __func__, hparams.n_text_head);
-        printf("%s: n_text_layer  = %d\n", __func__, hparams.n_text_layer);
-        printf("%s: n_mels        = %d\n", __func__, hparams.n_mels);
-        printf("%s: f16           = %d\n", __func__, hparams.f16);
-        printf("%s: type          = %d\n", __func__, model.type);
+        // printf("%s: n_vocab       = %d\n", __func__, hparams.n_vocab);
+        // printf("%s: n_audio_ctx   = %d\n", __func__, hparams.n_audio_ctx);
+        // printf("%s: n_audio_state = %d\n", __func__, hparams.n_audio_state);
+        // printf("%s: n_audio_head  = %d\n", __func__, hparams.n_audio_head);
+        // printf("%s: n_audio_layer = %d\n", __func__, hparams.n_audio_layer);
+        // printf("%s: n_text_ctx    = %d\n", __func__, hparams.n_text_ctx);
+        // printf("%s: n_text_state  = %d\n", __func__, hparams.n_text_state);
+        // printf("%s: n_text_head   = %d\n", __func__, hparams.n_text_head);
+        // printf("%s: n_text_layer  = %d\n", __func__, hparams.n_text_layer);
+        // printf("%s: n_mels        = %d\n", __func__, hparams.n_mels);
+        // printf("%s: f16           = %d\n", __func__, hparams.f16);
+        // printf("%s: type          = %d\n", __func__, model.type);
 
         g_buf_model.resize(MEM_REQ_MODEL.at(model.type));
         g_buf_compute.resize(std::max(MEM_REQ_ENCODE.at(model.type), MEM_REQ_DECODE.at(model.type)));
@@ -2910,13 +2910,6 @@ extern "C" std::string raw_transcribe(int argc, char **argv, bool isLog = false)
 }
 extern "C" char *transcribe(int argc, char **argv, bool isLog = false)
 {
-
-    for (int i = 0; i < argc; i++)
-    {
-        std::string arg = argv[i];
-        printf("%s\n", arg.c_str());
-    }
-
     std::string result = raw_transcribe(argc, argv, isLog);
     char *ch = new char[result.size() + 1];
     strcpy(ch, result.c_str());
