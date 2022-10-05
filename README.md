@@ -58,7 +58,7 @@ result
 ```bash
 {
   "@type":"transcribe",
-  "text":" Baby, nanya pergi dulu ya, baba sayang. *Berbicara*"
+  "text":" Baby, aku pergi dulu ya, babai sayang. *muach*"
 }
 ```
 

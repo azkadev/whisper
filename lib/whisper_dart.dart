@@ -4,8 +4,10 @@ import 'package:universal_io/io.dart';
 
 import 'package:ffi/ffi.dart';
 
-typedef transcribe_native = Pointer<Utf8> Function(Int argc, Pointer<Pointer<Utf8>> args, Bool isLog);
-typedef transcribe_dart = Pointer<Utf8> Function(int argc, Pointer<Pointer<Utf8>> args, bool isLog);
+typedef transcribe_native = Pointer<Utf8> Function(
+    Int argc, Pointer<Pointer<Utf8>> args, Bool isLog);
+typedef transcribe_dart = Pointer<Utf8> Function(
+    int argc, Pointer<Pointer<Utf8>> args, bool isLog);
 
 class Whisper {
   late String whisper_lib = "whisper.so";
@@ -25,7 +27,10 @@ class Whisper {
 
   Map get test {
     try {
-      var res = openLib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>("getString").call();
+      var res = openLib
+          .lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>(
+              "getString")
+          .call();
       var result = json.decode(res.toDartString());
       return result;
     } catch (e) {
@@ -38,9 +43,10 @@ class Whisper {
     required WhisperArgs args,
     bool isLog = false,
   }) {
-    try {
-      print(args.args);
-      var res = openLib.lookupFunction<transcribe_native, transcribe_dart>("transcribe").call(args.args.length, args.toNativeList(), isLog);
+    try { 
+      var res = openLib
+          .lookupFunction<transcribe_native, transcribe_dart>("transcribe")
+          .call(args.args.length, args.toNativeList(), isLog);
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
@@ -51,9 +57,11 @@ class Whisper {
 
 /// Don't forget to run malloc.free with result!
 Pointer<Pointer<Utf8>> strListToPointer(List<String> strings) {
-  List<Pointer<Utf8>> utf8PointerList = strings.map((str) => str.toNativeUtf8()).toList();
+  List<Pointer<Utf8>> utf8PointerList =
+      strings.map((str) => str.toNativeUtf8()).toList();
 
-  final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
+  final Pointer<Pointer<Utf8>> pointerPointer =
+      malloc.allocate(utf8PointerList.length);
 
   strings.asMap().forEach((index, utf) {
     pointerPointer[index] = utf8PointerList[index];
@@ -66,13 +74,15 @@ class WhisperArgs {
   late List<String> args;
   WhisperArgs(this.args);
   Pointer<Pointer<Utf8>> toNativeList() {
-    List<Pointer<Utf8>> utf8PointerList = args.map((str) => str.toNativeUtf8()).toList();
+    List<Pointer<Utf8>> utf8PointerList =
+        args.map((str) => str.toNativeUtf8()).toList();
 
-    final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
+    final Pointer<Pointer<Utf8>> pointerPointer =
+        malloc.allocate(utf8PointerList.length);
 
     args.asMap().forEach((index, utf) {
       pointerPointer[index] = utf8PointerList[index];
-    }); 
+    });
     return pointerPointer;
   }
 }

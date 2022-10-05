@@ -106,6 +106,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  ffmpeg_dart:
+    dependency: "direct main"
+    description:
+      name: ffmpeg_dart
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.0"
   file:
     dependency: transitive
     description:
