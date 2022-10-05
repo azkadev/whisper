@@ -7,3 +7,5 @@ build/
 whisper.cpp/
 models/
 samples/
+
+ffmpeg/
