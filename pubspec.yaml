@@ -12,3 +12,6 @@ environment:
 dev_dependencies:
   lints: ^2.0.0
   test: ^1.16.0
+dependencies:
+  ffi: ^2.0.1
+  galaxeus_lib: ^0.0.8
