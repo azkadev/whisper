@@ -6,11 +6,13 @@ import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:whisper_dart/whisper_dart.dart';
 
 void main(List<String> arguments) {
-  Whisper whisper = Whisper(whisperLib: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/whisper.cpp/whisper.so");
+  Whisper whisper = Whisper(whisperLib: "whisper.cpp/whisper.so");
   DynamicLibrary openLib = whisper.openLib;
   try {
-    var res = openLib.lookupFunction<Pointer<Void> Function(Pointer<Utf8> args), Pointer<void> Function(Pointer<Utf8> args)>("test").call("sakosa, sdsdsdsd".toNativeUtf8());
-    
+    var res = whisper.transcribe(
+      args: WhisperArgs("-f samples/output.wav".split(" ")),
+    );
+    print(res.toString());
   } catch (e) {
     print(e);
   }

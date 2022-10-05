@@ -2546,7 +2546,7 @@ extern "C" std::string raw_transcribe(int argc, char **argv, bool isLog = false)
     }
 
     // Model loading
-
+    
     // printf("%s: seed = %d\n", __func__, params.seed);
 
     int64_t t_load_us = 0;
@@ -2936,3 +2936,4 @@ extern "C" char *getString()
     strcpy(ch, result.c_str());
     return ch;
 }
+ 
