@@ -546,15 +546,15 @@ struct whisper_params
     bool no_timestamps = false;
 
     std::string language = "en";
-    std::string model = "models/ggml-base.en.bin";
-    std::string fname_inp = "samples/jfk.wav";
+    std::string model = "models/ggml-small.bin";
+    std::string fname_inp = "samples/output.wav";
 };
 
 void whisper_print_usage(int argc, char **argv, const whisper_params &params);
 
 bool whisper_params_parse(int argc, char **argv, whisper_params &params)
 {
-    for (int i = 0; i < argc; i++)
+    for (int i = 1; i < argc; i++)
     {
         std::string arg = argv[i];
 
@@ -2918,9 +2918,10 @@ extern "C" char *transcribe(int argc, char **argv, bool isLog = false)
 
 int main(int argc, char **argv)
 {
+    printf("%d\n", argc);
 
-    char *result = transcribe(1, {NULL});
-    printf("%s\nalow", result);
+    char *result = transcribe(argc, argv);
+    printf("%s\n", result);
     return 0;
 }
 
