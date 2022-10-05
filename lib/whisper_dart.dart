@@ -39,21 +39,22 @@ class Whisper {
     bool isLog = false,
   }) {
     try {
-      var res = openLib.lookupFunction<transcribe_native, transcribe_dart>("transcribe").call(argc, args.toNativeList(), isLog);
+      print(args.args);
+      var res = openLib.lookupFunction<transcribe_native, transcribe_dart>("transcribe").call(args.args.length, args.toNativeList(), isLog);
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
+    
       return WhisperResponse({"@type": "error"});
     }
   }
 }
+
 /// Don't forget to run malloc.free with result!
 Pointer<Pointer<Utf8>> strListToPointer(List<String> strings) {
-  List<Pointer<Utf8>> utf8PointerList =
-      strings.map((str) => str.toNativeUtf8()).toList();
+  List<Pointer<Utf8>> utf8PointerList = strings.map((str) => str.toNativeUtf8()).toList();
 
-  final Pointer<Pointer<Utf8>> pointerPointer =
-      malloc.allocate(utf8PointerList.length);
+  final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
 
   strings.asMap().forEach((index, utf) {
     pointerPointer[index] = utf8PointerList[index];
@@ -61,7 +62,6 @@ Pointer<Pointer<Utf8>> strListToPointer(List<String> strings) {
 
   return pointerPointer;
 }
-
 
 class WhisperArgs {
   late List<String> args;

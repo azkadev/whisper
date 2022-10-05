@@ -2919,8 +2919,8 @@ extern "C" char *transcribe(int argc, char **argv, bool isLog = false)
 int main(int argc, char **argv)
 {
 
-    std::string result = transcribe(1, {NULL});
-    printf("%s\n", result.c_str());
+    char *result = transcribe(1, {NULL});
+    printf("%s\nalow", result);
     return 0;
 }
 
