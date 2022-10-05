@@ -5,6 +5,22 @@ Whisper library speech to text offline,
 ## Refrence
 1. [Whisper-Official](https://github.com/openai/whisper)
 2. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
+   
+## Install
+
+```bash
+dart pub add whisper_dart
+```
+
+## Compile library
+
+```bash
+git clone https://github.com/azkadev/whisper_dart.git
+cd whisper.cpp
+chmod 777 compile.sh
+bash ./download-ggml-model.sh base.en
+./compile.sh
+```
 
 ## Testing
 ```dart
