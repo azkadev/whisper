@@ -44,7 +44,6 @@ class Whisper {
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
-    
       return WhisperResponse({"@type": "error"});
     }
   }
@@ -73,8 +72,7 @@ class WhisperArgs {
 
     args.asMap().forEach((index, utf) {
       pointerPointer[index] = utf8PointerList[index];
-    });
-
+    }); 
     return pointerPointer;
   }
 }
