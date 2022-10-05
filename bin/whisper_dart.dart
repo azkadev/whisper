@@ -7,12 +7,13 @@ import 'package:whisper_dart/whisper_dart.dart';
 
 void main(List<String> arguments) {
   Whisper whisper = Whisper(whisperLib: "whisper.cpp/whisper.so");
-  DynamicLibrary openLib = whisper.openLib;
+  DateTime time = DateTime.now();
   try {
     var res = whisper.transcribe(
       args: WhisperArgs([]),
     );
     print(res.toString());
+    print(convertToAgo(time.millisecondsSinceEpoch));
   } catch (e) {
     print(e);
   }

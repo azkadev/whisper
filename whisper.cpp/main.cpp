@@ -546,7 +546,7 @@ struct whisper_params
     bool no_timestamps = false;
 
     std::string language = "id";
-    std::string model = "models/ggml-small.bin";
+    std::string model = "models/ggml-model-whisper-small.bin";
     std::string fname_inp = "samples/output.wav";
 };
 
