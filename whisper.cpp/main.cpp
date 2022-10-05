@@ -2924,10 +2924,9 @@ int main(int argc, char **argv)
     return 0;
 }
 
-extern "C" void test()
-{
-    std::string result = transcribe(1, {NULL});
-    printf("%s\n", result.c_str());
+extern "C" void test(char *argv)
+{ 
+    printf("%s\n", argv);
 }
 
 extern "C" char *getString()
