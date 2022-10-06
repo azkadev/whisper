@@ -1,9 +1,12 @@
+// ignore_for_file: non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:ffi';
 import 'package:universal_io/io.dart';
 
 import 'package:ffi/ffi.dart';
 
+// ignore: camel_case_types
 typedef whisper_request_native = Pointer<Utf8> Function(Pointer<Utf8> body);
 
 class Whisper {

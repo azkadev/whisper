@@ -7,13 +7,13 @@ import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
   DateTime time = DateTime.now();
-  // FFmpeg fFmpeg = FFmpeg(
-  //   pathFFmpeg: "./ffmpeg/ffmpeg",
-  // );
-  // var res = fFmpeg.convertAudioToWavWhisper(
-  //   pathAudioInput: "./audio.ogg",
-  //   pathAudioOutput: "./samples/output.wav",
-  // );
+  FFmpeg fFmpeg = FFmpeg(
+    pathFFmpeg: "./ffmpeg/ffmpeg",
+  );
+  var res = fFmpeg.convertAudioToWavWhisper(
+    pathAudioInput: "./audio.ogg",
+    pathAudioOutput: "./samples/output.wav",
+  );
   // print(res);
   Whisper whisper = Whisper(
     whisperLib: "whisper.cpp/whisper.so",
