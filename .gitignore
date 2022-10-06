@@ -4,7 +4,5 @@
 
 # Conventional directory for build output.
 build/
-ffmpeg 
-
 ffmpeg/
 railway/
