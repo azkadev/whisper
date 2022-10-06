@@ -7,25 +7,23 @@ import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
   DateTime time = DateTime.now();
-  FFmpeg fFmpeg = FFmpeg(pathFFmpeg: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/ffmpeg/ffmpeg");
-  var res = fFmpeg.convertAudioToWavWhisper(
-    pathAudioInput: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/audio.ogg",
-    pathAudioOutput: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav",
-  );
-  print(res);
+  // FFmpeg fFmpeg = FFmpeg(
+  //   pathFFmpeg: "./ffmpeg/ffmpeg",
+  // );
+  // var res = fFmpeg.convertAudioToWavWhisper(
+  //   pathAudioInput: "./audio.ogg",
+  //   pathAudioOutput: "./samples/output.wav",
+  // );
+  // print(res);
   Whisper whisper = Whisper(
     whisperLib: "whisper.cpp/whisper.so",
   );
   try {
     var res = whisper.transcribe(
-      args: WhisperArgs([
-        // "-m",
-        // "models/ggml-model-whisper-small.bin",
-        // "-f",
-        // "samples/indonesia.wav",
-        // "--language",
-        // "id"
-      ]),
+      whisperRequest: WhisperRequest.fromWavFile(
+        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+      ),
     );
     print(res.toString());
     print(convertToAgo(time.millisecondsSinceEpoch));
@@ -50,14 +48,23 @@ extension ConvertAudioToWavWhisper on FFmpeg {
       return false;
     }
     File output_audio_file = File(pathAudioOutput);
-    if (input_audio_file.existsSync()) {
+    if (output_audio_file.existsSync()) {
       output_audio_file.deleteSync(recursive: true);
     }
-
     FFmpegRawResponse res = invokeSync(
       pathFFmpeg: pathFFmpeg,
       fFmpegArgs: FFmpegArgs(
-        ["-i", pathAudioInput, "-ar", "16000", "-ac", "1", "-c:a", "pcm_s16le", pathAudioOutput],
+        [
+          "-i",
+          pathAudioInput,
+          "-ar",
+          "16000",
+          "-ac",
+          "1",
+          "-c:a",
+          "pcm_s16le",
+          pathAudioOutput,
+        ],
       ),
     );
     if (res.special_type == "ok") {

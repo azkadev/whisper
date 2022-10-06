@@ -4,7 +4,7 @@
 
 # Conventional directory for build output.
 build/
-
-whisper.cpp/
+ 
 
 ffmpeg/
+railway/
