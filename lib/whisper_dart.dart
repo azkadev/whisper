@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:ffi';
+import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 import 'package:universal_io/io.dart';
 
 import 'package:ffi/ffi.dart';
@@ -35,7 +36,7 @@ class Whisper {
     }
   }
 
-  WhisperResponse transcribe({
+  WhisperResponse request({
     required WhisperRequest whisperRequest,
   }) {
     try {
@@ -44,6 +45,39 @@ class Whisper {
       return WhisperResponse(result);
     } catch (e) {
       return WhisperResponse({"@type": "error"});
+    }
+  }
+}
+
+class WhisperAudioconvert {
+  WhisperAudioconvert();
+  static File convert({
+    required File audioInput,
+    required File audioOutput,
+    String? pathFFmpeg,
+    FFmpegArgs? fFmpegArgs,
+    String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment = true,
+    bool runInShell = false,
+    Duration? timeout,
+  }) {
+    timeout ??= Duration(seconds: 10);
+    DateTime time_expire = DateTime.now().add(timeout);
+    var res = FFmpeg(pathFFmpeg: pathFFmpeg).convertAudioToWavWhisper(pathAudioInput: audioInput.path, pathAudioOutput: audioOutput.path, pathFFmpeg: pathFFmpeg, fFmpegArgs: fFmpegArgs, workingDirectory: workingDirectory, environment: environment, runInShell: runInShell);
+    while (true) {
+      if (DateTime.now().isAfter(time_expire)) {
+        throw "time out";
+      }
+      if (res) {
+        if (audioOutput.existsSync()) {
+          return audioOutput;
+        }
+      } else {
+        if (!audioInput.existsSync()) {
+          throw "audio input not found";
+        }
+      }
     }
   }
 }
@@ -154,5 +188,49 @@ class WhisperResponse {
   @override
   String toString() {
     return json.encode(rawData);
+  }
+}
+
+extension ConvertAudioToWavWhisper on FFmpeg {
+  bool convertAudioToWavWhisper({
+    required String pathAudioInput,
+    required String pathAudioOutput,
+    String? pathFFmpeg,
+    FFmpegArgs? fFmpegArgs,
+    String? workingDirectory,
+    Map<String, String>? environment,
+    bool includeParentEnvironment = true,
+    bool runInShell = false,
+  }) {
+    File input_audio_file = File(pathAudioInput);
+    if (!input_audio_file.existsSync()) {
+      return false;
+    }
+    File output_audio_file = File(pathAudioOutput);
+    if (output_audio_file.existsSync()) {
+      output_audio_file.deleteSync(recursive: true);
+    }
+    FFmpegRawResponse res = invokeSync(
+      pathFFmpeg: pathFFmpeg,
+      fFmpegArgs: FFmpegArgs(
+        [
+          "-i",
+          pathAudioInput,
+          "-ar",
+          "16000",
+          "-ac",
+          "1",
+          "-c:a",
+          "pcm_s16le",
+          pathAudioOutput,
+        ],
+      ),
+    );
+    if (res.special_type == "ok") {
+      return true;
+    } else {
+      print(res.toJson());
+    }
+    return false;
   }
 }
