@@ -6,7 +6,7 @@ import 'package:whisper_dart/whisper_dart.dart';
 import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
+  DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
     whisperLib: "whisper.cpp/whisper.so",
@@ -14,10 +14,11 @@ void main(List<String> arguments) {
   try {
     var res = whisper.request(
       whisperRequest: WhisperRequest.fromWavFile(
-        audio: WhisperAudioconvert.convert(
-          audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-          audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        ),
+        // audio: WhisperAudioconvert.convert(
+        //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
+        //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        // ),
+        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
         model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
       ),
     );

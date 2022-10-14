@@ -47,6 +47,7 @@ class Whisper {
       return WhisperResponse({"@type": "error"});
     }
   }
+  
 }
 
 class WhisperAudioconvert {
