@@ -28,6 +28,7 @@ bash ./download-ggml-model.sh base.en
    Ram: 8gb
 
 ## example
+example dengan auto convert dari semua jenis audio ke wav whisper
 
 ```dart
 // ignore_for_file: non_constant_identifier_names
@@ -67,22 +68,41 @@ result
 }
 ```
 
-## Testing
+## example 2
+
+example convert audio to text without auto convert
 ```dart
-import 'dart:convert';
-import 'dart:ffi';
-import 'package:ffi/ffi.dart';
+// ignore_for_file: non_constant_identifier_names
+import 'package:galaxeus_lib/galaxeus_lib.dart';
+import 'package:universal_io/io.dart';
 import 'package:whisper_dart/whisper_dart.dart';
+import 'package:ffmpeg_dart/ffmpeg_dart.dart';
+
 void main(List<String> arguments) {
-  Whisper whisper = Whisper(whisperLib: "path_to/whisper.so");
-  print(whisper.test);
+  DateTime time = DateTime.now(); 
+  // print(res);
+  Whisper whisper = Whisper(
+    whisperLib: "whisper.cpp/whisper.so",
+  );
+  try {
+    var res = whisper.request(
+      whisperRequest: WhisperRequest.fromWavFile(
+        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+      ),
+    );
+    print(res.toString());
+    print(convertToAgo(time.millisecondsSinceEpoch));
+  } catch (e) {
+    print(e);
+  }
 }
 ```
 
 result
 ```json
 {
-  "@type":"ok",
+  "@type":"transcribe",
   "text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
 }
 ```
