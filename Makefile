@@ -5,7 +5,7 @@ main:
 	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/ggml.c -fPIC -lstdc++
 	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/whisper.cpp -fPIC -lstdc++
 	g++ -pthread -O3 -std=c++11 -c ./whisper.cpp/main.cpp -fPIC -lstdc++
-	g++ -pthread -o ./whisper.so ./whisper.o ./ggml.o ./galaxeus_ai.o --shared -fPIC -lstdc++
+	g++ -pthread -o ./whisper.so ./whisper.o ./ggml.o ./main.o --shared -fPIC -lstdc++
 
 install:
 	sudo cp *.so /usr/lib/

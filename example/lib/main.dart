@@ -63,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
         Whisper whisper = Whisper(
-          whisperLib: "galaxeus_ai.so",
+          whisperLib: "whisper.so",
         );
         ReceivePort receivePort = ReceivePort();
         whisperIsolateData.second_send_port.send(receivePort.sendPort);
@@ -134,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                       onPressed: () async {
                         FilePickerResult? resul = await FilePicker.platform.pickFiles();
@@ -148,11 +148,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         }
                       },
-                      child: Text("set model"),
+                      child: const Text("set model"),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                       onPressed: () async {
                         FilePickerResult? resul = await FilePicker.platform.pickFiles();
@@ -166,11 +166,11 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                         }
                       },
-                      child: Text("set audio"),
+                      child: const Text("set audio"),
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.all(10),
+                    padding: const EdgeInsets.all(10),
                     child: ElevatedButton(
                       onPressed: () async {
                         if (audio.isEmpty) {
@@ -187,21 +187,21 @@ class _MyHomePageState extends State<MyHomePage> {
                           WhisperData(audio: audio, model: model),
                         );
                       },
-                      child: Text("Start"),
+                      child: const Text("Start"),
                     ),
                   ),
                 ],
               ),
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Text("model: ${model}"),
               ),
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Text("audio: ${audio}"),
               ),
               Padding(
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Text("Result: ${result}"),
               ),
             ],
@@ -217,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }) {
     Isolate.spawn((WhisperData whisperData) {
       Whisper whisper = Whisper(
-        whisperLib: "galaxeus_ai.so",
+        whisperLib: "whisper.so",
       );
       var res = whisper.request(
         whisperRequest: WhisperRequest.fromWavFile(
