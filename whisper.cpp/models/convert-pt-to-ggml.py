@@ -234,7 +234,7 @@ dir_tokenizer = tokenizer.name_or_path
 # output in the same directory as the model
 fname_out = dir_out + "/ggml-model.bin"
 
-with open(dir_tokenizer + "/vocab.json", "r") as f:
+with open(dir_tokenizer + "/vocab.json", "r", encoding="utf8") as f:
     tokens = json.load(f)
 
 # use 16-bit or 32-bit floats
@@ -271,7 +271,7 @@ byte_decoder = {v:k for k, v in byte_encoder.items()}
 fout.write(struct.pack("i", len(tokens)))
 
 for key in tokens:
-    text = bytearray([byte_decoder[c] for c in key]).decode('utf-8', errors='replace').encode('utf-8')
+    text = bytearray([byte_decoder[c] for c in key])
     fout.write(struct.pack("i", len(text)))
     fout.write(text)
 

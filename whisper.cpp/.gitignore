@@ -2,3 +2,13 @@ sync.sh
 main
 stream
 *.o
+.cache
+build/
+build-em/
+build-debug/
+build-release/
+out/
+.vs/
+.vscode/
+compile_commands.json
+.DS_Store

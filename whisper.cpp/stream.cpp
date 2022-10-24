@@ -36,9 +36,12 @@ std::string to_timestamp(int64_t t) {
 struct whisper_params {
     int32_t seed      = -1; // RNG seed, not used currently
     int32_t n_threads = std::min(4, (int32_t) std::thread::hardware_concurrency());
+    int32_t step_ms   = 3000;
+    int32_t length_ms = 10000;
 
     bool verbose              = false;
     bool translate            = false;
+    bool no_context           = true;
     bool print_special_tokens = false;
     bool no_timestamps        = true;
 
@@ -57,10 +60,16 @@ bool whisper_params_parse(int argc, char ** argv, whisper_params & params) {
             params.seed = std::stoi(argv[++i]);
         } else if (arg == "-t" || arg == "--threads") {
             params.n_threads = std::stoi(argv[++i]);
+        } else if (arg == "--step") {
+            params.step_ms = std::stoi(argv[++i]);
+        } else if (arg == "--length") {
+            params.length_ms = std::stoi(argv[++i]);
         } else if (arg == "-v" || arg == "--verbose") {
             params.verbose = true;
         } else if (arg == "--translate") {
             params.translate = true;
+        } else if (arg == "-kc" || arg == "--keep-context") {
+            params.no_context = false;
         } else if (arg == "-l" || arg == "--language") {
             params.language = argv[++i];
             if (whisper_lang_id(params.language.c_str()) == -1) {
@@ -97,8 +106,11 @@ void whisper_print_usage(int argc, char ** argv, const whisper_params & params) 
     fprintf(stderr, "  -h,       --help           show this help message and exit\n");
     fprintf(stderr, "  -s SEED,  --seed SEED      RNG seed (default: -1)\n");
     fprintf(stderr, "  -t N,     --threads N      number of threads to use during computation (default: %d)\n", params.n_threads);
+    fprintf(stderr, "            --step N         audio step size in milliseconds (default: %d)\n", params.step_ms);
+    fprintf(stderr, "            --length N       audio length in milliseconds (default: %d)\n", params.length_ms);
     fprintf(stderr, "  -v,       --verbose        verbose output\n");
     fprintf(stderr, "            --translate      translate from source language to english\n");
+    fprintf(stderr, "  -kc,      --keep-context   keep text context from earlier audio (default: false)\n");
     fprintf(stderr, "  -ps,      --print_special  print special tokens\n");
     fprintf(stderr, "  -nt,      --no_timestamps  do not print timestamps\n");
     fprintf(stderr, "  -l LANG,  --language LANG  spoken language (default: %s)\n", params.language.c_str());
@@ -197,9 +209,13 @@ int main(int argc, char ** argv) {
 
     struct whisper_context * ctx = whisper_init(params.model.c_str());
 
+    const int n_samples = (params.step_ms/1000.0)*WHISPER_SAMPLE_RATE;
+    const int n_samples_len = (params.length_ms/1000.0)*WHISPER_SAMPLE_RATE;
     const int n_samples_30s = 30*WHISPER_SAMPLE_RATE;
     std::vector<float> pcmf32(n_samples_30s, 0.0f);
     std::vector<float> pcmf32_old;
+
+    const int n_new_line = params.length_ms / params.step_ms - 1;
 
     // print some info about the processing
     {
@@ -211,16 +227,23 @@ int main(int argc, char ** argv) {
                 printf("%s: WARNING: model is not multilingual, ignoring language and translation options\n", __func__);
             }
         }
-        printf("%s: processing %d samples (%.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
-                __func__, int(pcmf32.size()), float(pcmf32.size())/WHISPER_SAMPLE_RATE, params.n_threads,
+        printf("%s: processing %d samples (step = %.1f sec / len = %.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
+                __func__,
+                n_samples,
+                float(n_samples)/WHISPER_SAMPLE_RATE,
+                float(n_samples_len)/WHISPER_SAMPLE_RATE,
+                params.n_threads,
                 params.language.c_str(),
                 params.translate ? "translate" : "transcribe",
                 params.no_timestamps ? 0 : 1);
+
+        printf("%s: n_new_line = %d\n", __func__, n_new_line);
         printf("\n");
     }
 
     SDL_PauseAudioDevice(g_dev_id_in, 0);
 
+    int n_iter = 0;
     bool is_running = true;
 
     // main audio loop
@@ -237,15 +260,23 @@ int main(int argc, char ** argv) {
             }
         }
 
-        // process 3 seconds of new audio
-        while (SDL_GetQueuedAudioSize(g_dev_id_in) < 3*WHISPER_SAMPLE_RATE*sizeof(float)) {
+        // process new audio
+        if (n_iter > 0 && SDL_GetQueuedAudioSize(g_dev_id_in) > 2*n_samples*sizeof(float)) {
+            fprintf(stderr, "\n\n%s: WARNING: cannot process audio fast enough, dropping audio ...\n\n", __func__);
+            SDL_ClearQueuedAudio(g_dev_id_in);
+        }
+
+        while (SDL_GetQueuedAudioSize(g_dev_id_in) < n_samples*sizeof(float)) {
             SDL_Delay(1);
         }
+
         const int n_samples_new = SDL_GetQueuedAudioSize(g_dev_id_in)/sizeof(float);
 
         // take one second from previous iteration
-        // TODO: better strategy
-        const int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_30s/30 - n_samples_new));
+        //const int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_30s/30 - n_samples_new));
+
+        // take up to params.length_ms audio from previous iteration
+        const int n_samples_take = std::min((int) pcmf32_old.size(), std::max(0, n_samples_len - n_samples_new));
 
         //printf("processing: take = %d, new = %d, old = %d\n", n_samples_take, n_samples_new, (int) pcmf32_old.size());
 
@@ -261,13 +292,14 @@ int main(int argc, char ** argv) {
 
         // run the inference
         {
-            whisper_full_params wparams = whisper_full_default_params(WHISPER_DECODE_GREEDY);
+            whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
 
             wparams.print_progress       = false;
             wparams.print_special_tokens = params.print_special_tokens;
             wparams.print_realtime       = false;
             wparams.print_timestamps     = !params.no_timestamps;
             wparams.translate            = params.translate;
+            wparams.no_context           = params.no_context;
             wparams.language             = params.language.c_str();
             wparams.n_threads            = params.n_threads;
 
@@ -278,7 +310,7 @@ int main(int argc, char ** argv) {
 
             // print result;
             {
-                printf("\n");
+                printf("\33[2K\r");
 
                 const int n_segments = whisper_full_n_segments(ctx);
                 for (int i = 0; i < n_segments; ++i) {
@@ -294,6 +326,14 @@ int main(int argc, char ** argv) {
                         printf ("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text);
                     }
                 }
+            }
+
+            ++n_iter;
+
+            if ((n_iter % n_new_line) == 0) {
+                printf("\n");
+
+                pcmf32_old.clear();
             }
         }
     }

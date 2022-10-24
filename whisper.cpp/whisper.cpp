@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <cassert>
+#define _USE_MATH_DEFINES
 #include <cmath>
 #include <cstdio>
 #include <cstring>
@@ -14,7 +15,7 @@
 #include <vector>
 
 #define USE_FLASH_ATTN
-#define USE_FLASH_FF
+//#define USE_FLASH_FF
 
 // available whisper models
 enum e_model {
@@ -147,19 +148,19 @@ static const std::map<e_model, size_t> MEM_REQ_ENCODE = {
 };
 
 static const std::map<e_model, size_t> MEM_REQ_ENCODE_LAYER = {
-    { MODEL_TINY,     64ull*MB },
-    { MODEL_BASE,     84ull*MB },
-    { MODEL_SMALL,   128ull*MB },
-    { MODEL_MEDIUM,  172ull*MB },
-    { MODEL_LARGE,   216ull*MB },
+    { MODEL_TINY,    104ull*MB },
+    { MODEL_BASE,    138ull*MB },
+    { MODEL_SMALL,   208ull*MB },
+    { MODEL_MEDIUM,  280ull*MB },
+    { MODEL_LARGE,   354ull*MB },
 };
 
 static const std::map<e_model, size_t> MEM_REQ_DECODE = {
-    { MODEL_TINY,     94ull*MB },
-    { MODEL_BASE,     96ull*MB },
-    { MODEL_SMALL,    98ull*MB },
-    { MODEL_MEDIUM,  100ull*MB },
-    { MODEL_LARGE,   102ull*MB },
+    { MODEL_TINY,    200ull*MB },
+    { MODEL_BASE,    202ull*MB },
+    { MODEL_SMALL,   204ull*MB },
+    { MODEL_MEDIUM,  206ull*MB },
+    { MODEL_LARGE,   208ull*MB },
 };
 
 static const std::map<e_model, size_t> MEM_REQ_DECODE_LAYER = {
@@ -209,9 +210,12 @@ struct whisper_vocab {
     }
 };
 
-struct whisper_result {
-    int64_t t;
-    whisper_token id;
+struct whisper_token_data {
+    whisper_token id;  // token id
+    whisper_token tid; // forced timestamp token id
+
+    float p;  // probability of the token
+    float pt; // probability of the timestamp token
 };
 
 struct whisper_segment {
@@ -219,6 +223,8 @@ struct whisper_segment {
     int64_t t1;
 
     std::string text;
+
+    std::vector<whisper_token_data> tokens;
 };
 
 // medium
@@ -378,8 +384,11 @@ struct whisper_model {
     struct ggml_tensor * memory_cross_k;
     struct ggml_tensor * memory_cross_v;
 
-    //
+    // context
     struct ggml_context * ctx;
+
+    // tensors
+    int n_loaded;
     std::map<std::string, struct ggml_tensor *> tensors;
 };
 
@@ -403,8 +412,10 @@ struct whisper_context {
     std::vector<float> probs;
     std::vector<float> logits;
 
-    std::vector<whisper_result>  result_cur;
+    std::vector<whisper_token_data> tokens_cur;
     std::vector<whisper_segment> result_all;
+
+    std::vector<whisper_token> prompt_past;
 };
 
 // load the model from a ggml file
@@ -419,7 +430,7 @@ struct whisper_context {
 // see the convert-pt-to-ggml.py script for details
 //
 bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
-    //printf("%s: loading model from '%s'\n", __func__, fname.c_str());
+    fprintf(stderr, "%s: loading model from '%s'\n", __func__, fname.c_str());
 
     auto & model = wctx.model;
     auto & vocab = wctx.vocab;
@@ -478,18 +489,18 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
             model.type = e_model::MODEL_LARGE;
         }
 
-        // printf("%s: n_vocab       = %d\n", __func__, hparams.n_vocab);
-        // printf("%s: n_audio_ctx   = %d\n", __func__, hparams.n_audio_ctx);
-        // printf("%s: n_audio_state = %d\n", __func__, hparams.n_audio_state);
-        // printf("%s: n_audio_head  = %d\n", __func__, hparams.n_audio_head);
-        // printf("%s: n_audio_layer = %d\n", __func__, hparams.n_audio_layer);
-        // printf("%s: n_text_ctx    = %d\n", __func__, hparams.n_text_ctx);
-        // printf("%s: n_text_state  = %d\n", __func__, hparams.n_text_state);
-        // printf("%s: n_text_head   = %d\n", __func__, hparams.n_text_head);
-        // printf("%s: n_text_layer  = %d\n", __func__, hparams.n_text_layer);
-        // printf("%s: n_mels        = %d\n", __func__, hparams.n_mels);
-        // printf("%s: f16           = %d\n", __func__, hparams.f16);
-        // printf("%s: type          = %d\n", __func__, model.type);
+        fprintf(stderr, "%s: n_vocab       = %d\n", __func__, hparams.n_vocab);
+        fprintf(stderr, "%s: n_audio_ctx   = %d\n", __func__, hparams.n_audio_ctx);
+        fprintf(stderr, "%s: n_audio_state = %d\n", __func__, hparams.n_audio_state);
+        fprintf(stderr, "%s: n_audio_head  = %d\n", __func__, hparams.n_audio_head);
+        fprintf(stderr, "%s: n_audio_layer = %d\n", __func__, hparams.n_audio_layer);
+        fprintf(stderr, "%s: n_text_ctx    = %d\n", __func__, hparams.n_text_ctx);
+        fprintf(stderr, "%s: n_text_state  = %d\n", __func__, hparams.n_text_state);
+        fprintf(stderr, "%s: n_text_head   = %d\n", __func__, hparams.n_text_head);
+        fprintf(stderr, "%s: n_text_layer  = %d\n", __func__, hparams.n_text_layer);
+        fprintf(stderr, "%s: n_mels        = %d\n", __func__, hparams.n_mels);
+        fprintf(stderr, "%s: f16           = %d\n", __func__, hparams.f16);
+        fprintf(stderr, "%s: type          = %d\n", __func__, model.type);
 
         wctx.buf_model.resize(MEM_REQ_MODEL.at(model.type));
         wctx.buf_compute.resize(std::max(MEM_REQ_ENCODE.at(model.type), MEM_REQ_DECODE.at(model.type)));
@@ -501,7 +512,7 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
                    wctx.buf_compute.size() +
                    wctx.buf_compute_layer.size();
 
-       // printf("%s: mem_required  = %.2f MB\n", __func__, mem_required / 1024.0 / 1024.0);
+        fprintf(stderr, "%s: mem_required  = %.2f MB\n", __func__, mem_required / 1024.0 / 1024.0);
     }
 
     // load mel filters
@@ -551,7 +562,7 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
         }
 
         if (n_vocab < model.hparams.n_vocab) {
-           // printf("%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
+            fprintf(stderr, "%s: adding %d extra tokens\n", __func__, model.hparams.n_vocab - n_vocab);
             for (int i = n_vocab; i < model.hparams.n_vocab; i++) {
                 if (i > vocab.token_beg) {
                     word = "[_TT_" + std::to_string(i - vocab.token_beg) + "]";
@@ -696,7 +707,7 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
 
         ctx_size += (15 + 15*n_audio_layer + 24*n_text_layer)*256; // object overhead
 
-        //printf("%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
+        fprintf(stderr, "%s: ggml ctx size = %6.2f MB\n", __func__, ctx_size/(1024.0*1024.0));
     }
 
     // create the ggml context
@@ -943,12 +954,14 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
             ggml_nbytes(model.memory_k)       + ggml_nbytes(model.memory_v) +
             ggml_nbytes(model.memory_cross_k) + ggml_nbytes(model.memory_cross_v);
 
-      //  printf("%s: memory size = %8.2f MB \n", __func__, memory_size/1024.0/1024.0);
+        fprintf(stderr, "%s: memory size = %8.2f MB \n", __func__, memory_size/1024.0/1024.0);
     }
 
     // load weights
     {
         size_t total_size = 0;
+
+        model.n_loaded = 0;
 
         while (true) {
             int32_t n_dims;
@@ -1002,9 +1015,17 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
 
             //printf("%24s - [%5d, %5d], type = %6s, %6.2f MB\n", name.data(), ne[0], ne[1], ftype == 0 ? "float" : "f16", ggml_nbytes(tensor)/1024.0/1024.0);
             total_size += ggml_nbytes(tensor);
+            model.n_loaded++;
         }
 
-       // printf("%s: model size  = %8.2f MB\n", __func__, total_size/1024.0/1024.0);
+        fprintf(stderr, "%s: model size  = %8.2f MB\n", __func__, total_size/1024.0/1024.0);
+
+        if (model.n_loaded == 0) {
+            fprintf(stderr, "%s: WARN no tensors loaded from model file - assuming empty model for testing\n", __func__);
+        } else if (model.n_loaded != (int) model.tensors.size()) {
+            fprintf(stderr, "%s: ERROR not all tensors loaded from model file - expected %zu, got %d\n", __func__, model.tensors.size(), model.n_loaded);
+            return false;
+        }
     }
 
     fin.close();
@@ -1020,8 +1041,6 @@ bool whisper_model_load(const std::string & fname, whisper_context & wctx) {
 //   - model:      the model
 //   - n_threads:  number of threads to use
 //   - mel_offset: offset in the mel spectrogram (i.e. audio offset)
-//   - mel_inp:    input mel spectrogram
-//   - features:   output encoded features
 //
 bool whisper_encode(
               whisper_context & wctx,
@@ -1405,10 +1424,9 @@ bool whisper_encode(
 //
 //   - model:      the model
 //   - n_threads:  number of threads to use
-//   - n_past:     prompt length
-//   - prompt:     text prompt
-//   - logits_out: output logits
-//   - probs_out:  output probabilities
+//   - tokens:     text prompt
+//   - n_tokens:   number of tokens in the prompt
+//   - n_past:     number of past tokens to prefix the prompt with
 //
 bool whisper_decode(
               whisper_context & wctx,
@@ -1773,11 +1791,11 @@ bool whisper_decode(
 }
 
 // the most basic sampling scheme - select the top token
-// TODO: beam search
-// TODO: temperature
-whisper_vocab::id whisper_sample_best(
+whisper_token_data whisper_sample_best(
         const whisper_vocab & vocab,
-        const float * probs, bool need_timestamp) {
+        const float * probs) {
+    whisper_token_data result;
+
     int n_logits = vocab.id_to_token.size();
 
     std::vector<std::pair<double, whisper_vocab::id>> probs_id;
@@ -1787,9 +1805,38 @@ whisper_vocab::id whisper_sample_best(
         probs_id.push_back(std::make_pair(probs[i], i));
     }
 
-    const int top_k = 4;
+    {
+        double sum_ts =  0.0;
+        double max_ts = -1.0;
+        double max_tx = -1.0;
+
+        for (int i = 0; i < vocab.token_beg; i++) {
+            max_tx = std::max(max_tx, probs_id[i].first);
+        }
+
+        for (int i = vocab.token_beg; i < n_logits; i++) {
+            sum_ts += probs_id[i].first;
+            if  (probs_id[i].first > max_ts) {
+                max_ts = probs_id[i].first;
+                result.tid = probs_id[i].second;
+            }
+        }
+
+        // if the probability sum of all timestamp tokens is higher than the max probability of the text tokens - sample a
+        // timestamp token
+        if (sum_ts > max_tx) {
+            // ref: https://github.com/openai/whisper/blob/0b1ba3d46ebf7fe6f953acfd8cad62a4f851b49f/whisper/decoding.py#L430-L438
+            for (int i = 0; i < vocab.token_beg; i++) {
+                probs_id[i].first = -INFINITY;
+            }
+        }
+
+        result.pt = max_ts/(sum_ts + 1e-6);
+    }
 
     // find the top K tokens
+    const int top_k = 4;
+
     std::partial_sort(
             probs_id.begin(),
             probs_id.begin() + top_k, probs_id.end(),
@@ -1804,15 +1851,6 @@ whisper_vocab::id whisper_sample_best(
     //    printf("%d: '%s' %f, %d\n", i, vocab.id_to_token.at(probs_id[i].second).c_str(), probs_id[i].first, probs_id[i].second);
     //}
 
-    if (need_timestamp) {
-        // at the end of the 30-second audio segment, we start giving preference to time tokens
-        for (int i = 0; i < top_k; i++) {
-            if (probs_id[i].second > vocab.token_beg + 1300 && probs_id[i].first > 0.01*probs_id[0].first) {
-                return probs_id[i].second;
-            }
-        }
-    }
-
     int res = 0;
     while ((probs_id[res].second == vocab.token_sot ||
             probs_id[res].second == vocab.token_solm ||
@@ -1821,7 +1859,10 @@ whisper_vocab::id whisper_sample_best(
         res++;
     }
 
-    return probs_id[res].second;
+    result.id = probs_id[res].second;
+    result.p  = probs_id[res].first;
+
+    return result;
 }
 
 // samples only from the timestamps tokens
@@ -2066,6 +2107,8 @@ bool log_mel_spectrogram(
 //
 
 struct whisper_context * whisper_init(const char * path_model) {
+    ggml_time_init();
+
     whisper_context * ctx = new whisper_context;
 
     const int64_t t_start_us = ggml_time_us();
@@ -2146,15 +2189,15 @@ int whisper_decode(struct whisper_context * ctx, const whisper_token * tokens, i
     return 0;
 }
 
-whisper_token whisper_sample_best(struct whisper_context * ctx, bool need_timestamp) {
+whisper_token whisper_sample_best(struct whisper_context * ctx) {
     const int64_t t_start_sample_us = ggml_time_us();
 
     // TODO: simplify
-    auto res = whisper_sample_best(ctx->vocab, ctx->probs.data() + (ctx->probs.size() - ctx->vocab.n_vocab), need_timestamp);
+    auto res = whisper_sample_best(ctx->vocab, ctx->probs.data() + (ctx->probs.size() - ctx->vocab.n_vocab));
 
     ctx->t_sample_us += ggml_time_us() - t_start_sample_us;
 
-    return res;
+    return res.id;
 }
 
 whisper_token whisper_sample_timestamp(struct whisper_context * ctx) {
@@ -2236,78 +2279,117 @@ whisper_token whisper_token_transcribe() {
 void whisper_print_timings(struct whisper_context * ctx) {
     const int64_t t_end_us = ggml_time_us();
 
-    printf("\n\n");
-    printf("%s:     load time = %8.2f ms\n", __func__, ctx->t_load_us/1000.0f);
-    printf("%s:      mel time = %8.2f ms\n", __func__, ctx->t_mel_us/1000.0f);
-    printf("%s:   sample time = %8.2f ms\n", __func__, ctx->t_sample_us/1000.0f);
-    printf("%s:   encode time = %8.2f ms / %.2f ms per layer\n", __func__, ctx->t_encode_us/1000.0f, ctx->t_encode_us/1000.0f/ctx->model.hparams.n_audio_layer);
-    printf("%s:   decode time = %8.2f ms / %.2f ms per layer\n", __func__, ctx->t_decode_us/1000.0f, ctx->t_decode_us/1000.0f/ctx->model.hparams.n_text_layer);
-    printf("%s:    total time = %8.2f ms\n", __func__, (t_end_us - ctx->t_start_us)/1000.0f);
+    fprintf(stderr, "\n");
+    fprintf(stderr, "%s:     load time = %8.2f ms\n", __func__, ctx->t_load_us/1000.0f);
+    fprintf(stderr, "%s:      mel time = %8.2f ms\n", __func__, ctx->t_mel_us/1000.0f);
+    fprintf(stderr, "%s:   sample time = %8.2f ms\n", __func__, ctx->t_sample_us/1000.0f);
+    fprintf(stderr, "%s:   encode time = %8.2f ms / %.2f ms per layer\n", __func__, ctx->t_encode_us/1000.0f, ctx->t_encode_us/1000.0f/ctx->model.hparams.n_audio_layer);
+    fprintf(stderr, "%s:   decode time = %8.2f ms / %.2f ms per layer\n", __func__, ctx->t_decode_us/1000.0f, ctx->t_decode_us/1000.0f/ctx->model.hparams.n_text_layer);
+    fprintf(stderr, "%s:    total time = %8.2f ms\n", __func__, (t_end_us - ctx->t_start_us)/1000.0f);
 }
 
 ////////////////////////////////////////////////////////////////////////////
 
-struct whisper_full_params whisper_full_default_params(enum whisper_decode_strategy strategy) {
+struct whisper_full_params whisper_full_default_params(enum whisper_sampling_strategy strategy) {
     struct whisper_full_params result;
 
     switch (strategy) {
-        case WHISPER_DECODE_GREEDY:
+        case WHISPER_SAMPLING_GREEDY:
             {
-                result = (struct whisper_full_params) {
-                    .strategy  = WHISPER_DECODE_GREEDY,
-                    .n_threads = std::min(4, (int32_t) std::thread::hardware_concurrency()),
+                result = {
+                    /*.strategy             =*/ WHISPER_SAMPLING_GREEDY,
 
-                    .translate            = false,
-                    .print_special_tokens = false,
-                    .print_progress       = true,
-                    .print_realtime       = false,
-                    .print_timestamps     = true,
+                    /*.n_threads            =*/ std::min(4, (int32_t) std::thread::hardware_concurrency()),
+                    /*.offset_ms            =*/ 0,
 
-                    .language = "en",
+                    /*.translate            =*/ false,
+                    /*.no_context           =*/ false,
+                    /*.print_special_tokens =*/ false,
+                    /*.print_progress       =*/ true,
+                    /*.print_realtime       =*/ false,
+                    /*.print_timestamps     =*/ true,
 
-                    .greedy = {
-                        .n_past = 0,
+                    /*.language             =*/ "en",
+
+                    /*.greedy               =*/ {
+                        /*.n_past =*/ 0,
                     },
+
+                    /*.beam_search          =*/ {
+                        /*.n_past     =*/ -1,
+                        /*.beam_width =*/ -1,
+                        /*.n_best     =*/ -1,
+                    },
+
+                    /*.new_segment_callback =*/ nullptr,
+                    /*.new_segment_callback_user_data =*/ nullptr,
                 };
             } break;
-        case WHISPER_DECODE_BEAM_SEARCH:
+        case WHISPER_SAMPLING_BEAM_SEARCH:
             {
-                result = (struct whisper_full_params) {
-                    .strategy  = WHISPER_DECODE_GREEDY,
-                    .n_threads = std::min(4, (int32_t) std::thread::hardware_concurrency()),
+                result = {
+                    /*.strategy             =*/ WHISPER_SAMPLING_BEAM_SEARCH,
 
-                    .translate            = false,
-                    .print_special_tokens = false,
-                    .print_progress       = true,
-                    .print_realtime       = false,
-                    .print_timestamps     = true,
+                    /*.n_threads            =*/ std::min(4, (int32_t) std::thread::hardware_concurrency()),
+                    /*.offset_ms            =*/ 0,
 
-                    .language = "en",
+                    /*.translate            =*/ false,
+                    /*.no_context           =*/ false,
+                    /*.print_special_tokens =*/ false,
+                    /*.print_progress       =*/ true,
+                    /*.print_realtime       =*/ false,
+                    /*.print_timestamps     =*/ true,
 
-                    .beam_search = {
-                        .n_past = 0,
-                        .beam_width = 10,
-                        .n_best = 5,
+                    /*.language             =*/ "en",
+
+                    /*.greedy               =*/ {
+                        /*.n_past =*/ -1,
                     },
+
+                    /*.beam_search          =*/ {
+                        /*.n_past     =*/ 0,
+                        /*.beam_width =*/ 10,
+                        /*.n_best     =*/ 5,
+                    },
+
+                    /*.new_segment_callback =*/ nullptr,
+                    /*.new_segment_callback_user_data =*/ nullptr,
                 };
             } break;
     }
 
     return result;
 }
+
 int whisper_full(
         struct whisper_context * ctx,
         struct whisper_full_params params,
         const float * samples,
         int n_samples) {
+    // clear old results
+    auto & result_all = ctx->result_all;
+    auto & tokens_cur = ctx->tokens_cur;
+
+    result_all.clear();
+
     // compute log mel spectrogram
     if (whisper_pcm_to_mel(ctx, samples, n_samples, params.n_threads) != 0) {
         fprintf(stderr, "%s: failed to compute log mel spectrogram\n", __func__);
         return -1;
     }
 
+    // if length of spectrogram is less than 1s (100 samples), then return
+    // basically don't process anything that is less than 1s
+    // see issue #39: https://github.com/ggerganov/whisper.cpp/issues/39
+    if (whisper_n_len(ctx) < 100) {
+        return 0;
+    }
+
     // the accumulated text context so far
-    std::vector<whisper_token> prompt_past = { };
+    auto & prompt_past = ctx->prompt_past;
+    if (params.no_context) {
+        prompt_past.clear();
+    }
 
     // these tokens determine the task that will be performed
     std::vector<whisper_token> prompt_init = { whisper_token_sot(ctx) };
@@ -2320,22 +2402,17 @@ int whisper_full(
         }
     }
 
-    auto & result_all = ctx->result_all;
-    auto & result_cur = ctx->result_cur;
-
-    result_all.clear();
-
     int progress_prev = 0;
     int progress_step = 5;
 
     // main loop
-    int seek = 0;
+    int seek = params.offset_ms/10;
     while (true) {
         int progress_cur = (100*seek)/whisper_n_len(ctx);
         while (progress_cur >= progress_prev + progress_step) {
             progress_prev += progress_step;
             if (params.print_progress) {
-                printf("%s: progress = %3d%%\n", __func__, progress_prev);
+                fprintf(stderr, "%s: progress = %3d%%\n", __func__, progress_prev);
             }
         }
 
@@ -2372,13 +2449,13 @@ int whisper_full(
         // print the prompt
         //printf("\n\n");
         //for (int i = 0; i < prompt.size(); i++) {
-        //    printf("%s: prompt[%d] = %s\n", __func__, i, vocab.id_to_token[prompt[i]].c_str());
+        //    printf("%s: prompt[%d] = %s\n", __func__, i, ctx->vocab.id_to_token[prompt[i]].c_str());
         //}
         //printf("\n\n");
 
         // the accumulated transcription in the current interation
         int result_len = 0;
-        result_cur.clear();
+        tokens_cur.clear();
 
         for (int i = 0; i < whisper_n_text_ctx(ctx)/2 - 4; ++i) {
             if (whisper_decode(ctx, prompt.data(), prompt.size(), n_past, params.n_threads) != 0) {
@@ -2397,31 +2474,40 @@ int whisper_full(
             // feel free to experiment!
             //
             {
-                whisper_token id  = 0;
-                whisper_token tid = whisper_token_beg(ctx);
+                auto token = whisper_sample_best(ctx->vocab, ctx->probs.data() + (ctx->probs.size() - ctx->vocab.n_vocab));
 
-                id = whisper_sample_best(ctx, result_len == 0);
-                if (i > 0) {
-                    tid = whisper_sample_timestamp(ctx);
+                if (i == 0) {
+                    token.tid = whisper_token_beg(ctx);
                 }
 
-                // update sliding window
-                if (id > whisper_token_beg(ctx)) {
-                    seek_delta = 2*(id - whisper_token_beg(ctx));
+                // timestamp token - update sliding window
+                if (token.id > whisper_token_beg(ctx)) {
+                    seek_delta = 2*(token.id - whisper_token_beg(ctx));
                     result_len = i + 1;
                 }
 
                 // add it to the context
-                prompt.push_back(id);
-                result_cur.push_back({ seek + 2*(tid - whisper_token_beg(ctx)), id });
+                prompt.push_back(token.id);
+                tokens_cur.push_back(token);
 
                 //printf("%s: %s\n", __func__, ctx->vocab.id_to_token[id].c_str());
 
                 // end of text token
-                if (id == whisper_token_eot(ctx)) {
+                if (token.id == whisper_token_eot(ctx)) {
                     if (result_len == 0) {
-                        result_len = i + 1;
+                        if (seek + seek_delta + 100 >= whisper_n_len(ctx)) {
+                            result_len = i + 1;
+                        } else {
+                            // TODO: figure out how to resolve this
+                            fprintf(stderr, "\n%s: failed to generate timestamp token - this should not happen\n\n", __func__);
+                        }
                     }
+                    break;
+                }
+
+                // TESTS: if no tensors are loaded, it means we are running tests
+                if (ctx->model.n_loaded == 0) {
+                    seek_delta = 100*WHISPER_CHUNK_SIZE;
                     break;
                 }
             }
@@ -2431,25 +2517,30 @@ int whisper_full(
             }
         }
 
-        result_cur.resize(result_len);
+        tokens_cur.resize(result_len);
 
-        for (const auto & r : result_cur) {
+        for (const auto & r : tokens_cur) {
             prompt_past.push_back(r.id);
         }
 
         // store the text from this iteration
-        if (result_cur.size() > 0) {
-            auto t0 = result_cur.front().t;
+        if (tokens_cur.size() > 0) {
+            int  i0 = 0;
+            auto t0 = seek + 2*(tokens_cur.front().tid - whisper_token_beg(ctx));
 
             std::string text = "";
 
-            for (int i = 0; i < (int) result_cur.size(); i++) {
-                if (params.print_special_tokens == false && result_cur[i].id >= whisper_token_eot(ctx)) {
+            for (int i = 0; i < (int) tokens_cur.size(); i++) {
+                //printf("%s: %18s %6.3f %18s %6.3f\n", __func__,
+                //        ctx->vocab.id_to_token[tokens_cur[i].id].c_str(), tokens_cur[i].p,
+                //        ctx->vocab.id_to_token[tokens_cur[i].tid].c_str(), tokens_cur[i].pt);
+
+                if (params.print_special_tokens == false && tokens_cur[i].id >= whisper_token_eot(ctx)) {
                 } else {
-                    text += whisper_token_to_str(ctx, result_cur[i].id);
+                    text += whisper_token_to_str(ctx, tokens_cur[i].id);
                 }
-                if (result_cur[i].id > whisper_token_beg(ctx)) {
-                    const auto t1 = result_cur[i].t;
+                if (tokens_cur[i].id > whisper_token_beg(ctx)) {
+                    const auto t1 = seek + 2*(tokens_cur[i].tid - whisper_token_beg(ctx));
                     if (!text.empty()) {
                         if (params.print_realtime) {
                             if (params.print_timestamps) {
@@ -2460,14 +2551,21 @@ int whisper_full(
                             }
                         }
 
-                        result_all.push_back({ t0, t1, text });
+                        result_all.push_back({ t0, t1, text, {} });
+                        for (int j = i0; j <= i; j++) {
+                            result_all.back().tokens.push_back(tokens_cur[j]);
+                        }
+                        if (params.new_segment_callback) {
+                            params.new_segment_callback(ctx, params.new_segment_callback_user_data);
+                        }
                     }
                     text = "";
-                    while (result_cur[i].id > whisper_token_beg(ctx) && i < (int) result_cur.size()) {
+                    while (i < (int) tokens_cur.size() && tokens_cur[i].id > whisper_token_beg(ctx)) {
                         i++;
                     }
                     i--;
-                    t0 = result_cur[i].t;
+                    t0 = t1;
+                    i0 = i + 1;
                 }
             }
 
@@ -2483,7 +2581,13 @@ int whisper_full(
                     }
                 }
 
-                result_all.push_back({ t0, t1, text });
+                result_all.push_back({ t0, t1, text, {} });
+                for (int j = i0; j < (int) tokens_cur.size(); j++) {
+                    result_all.back().tokens.push_back(tokens_cur[j]);
+                }
+                if (params.new_segment_callback) {
+                    params.new_segment_callback(ctx, params.new_segment_callback_user_data);
+                }
             }
         }
 
@@ -2507,4 +2611,20 @@ int64_t whisper_full_get_segment_t1(struct whisper_context * ctx, int i_segment)
 
 const char * whisper_full_get_segment_text(struct whisper_context * ctx, int i_segment) {
     return ctx->result_all[i_segment].text.c_str();
+}
+
+int whisper_full_n_tokens(struct whisper_context * ctx, int i_segment) {
+    return ctx->result_all[i_segment].tokens.size();
+}
+
+const char * whisper_full_get_token_text(struct whisper_context * ctx, int i_segment, int i_token) {
+    return ctx->vocab.id_to_token[ctx->result_all[i_segment].tokens[i_token].id].c_str();
+}
+
+whisper_token whisper_full_get_token_id(struct whisper_context * ctx, int i_segment, int i_token) {
+    return ctx->result_all[i_segment].tokens[i_token].id;
+}
+
+float whisper_full_get_token_p(struct whisper_context * ctx, int i_segment, int i_token) {
+    return ctx->result_all[i_segment].tokens[i_token].p;
 }

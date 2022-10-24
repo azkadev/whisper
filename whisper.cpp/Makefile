@@ -2,12 +2,26 @@ UNAME_S := $(shell uname -s)
 UNAME_P := $(shell uname -p)
 UNAME_M := $(shell uname -m)
 
+# Mac OS + Arm can report x86_64
+# ref: https://github.com/ggerganov/whisper.cpp/issues/66#issuecomment-1282546789
+ifeq ($(UNAME_S),Darwin)
+	ifneq ($(UNAME_P),arm)
+		SYSCTL_M := $(shell sysctl -n hw.optional.arm64)
+		ifeq ($(SYSCTL_M),1)
+			UNAME_P := arm
+			UNAME_M := arm64
+			warn := $(warning Your arch is announced as x86_64, but it seems to actually be ARM64. Not fixing that can lead to bad performance. For more info see: https://github.com/ggerganov/whisper.cpp/issues/66\#issuecomment-1282546789)
+		endif
+	endif
+endif
+
 #
 # Compile flags
 #
 
 CFLAGS   = -O3 -std=c11
 CXXFLAGS = -O3 -std=c++11
+LDFLAGS  =
 
 CFLAGS   += -Wall -Wextra -Wno-unused-parameter -Wno-unused-function
 CXXFLAGS += -Wall -Wextra -Wno-unused-parameter -Wno-unused-function
@@ -22,17 +36,30 @@ ifeq ($(UNAME_S),Darwin)
 	CFLAGS   += -pthread
 	CXXFLAGS += -pthread
 endif
+ifeq ($(UNAME_S),FreeBSD)
+	CFLAGS   += -pthread
+	CXXFLAGS += -pthread
+endif
 
 # Architecture specific
-ifeq ($(UNAME_P),x86_64)
+# TODO: probably these flags need to be tweaked on some architectures
+#       feel free to update the Makefile for your architecture and send a pull request or issue
+ifeq ($(UNAME_M),x86_64)
 	CFLAGS += -mavx -mavx2 -mfma -mf16c
 endif
-ifneq ($(filter arm%,$(UNAME_P)),)
-	# Mac M1
+ifeq ($(UNAME_M),amd64)
+	CFLAGS += -mavx -mavx2 -mfma -mf16c
 endif
-ifneq ($(filter aarch64%,$(UNAME_P)),)
+ifneq ($(filter arm%,$(UNAME_M)),)
+	# Mac M1 - include Accelerate framework
+	ifeq ($(UNAME_S),Darwin)
+		CFLAGS  += -DGGML_USE_ACCELERATE
+		LDFLAGS += -framework Accelerate
 	endif
-	ifneq ($(filter armv6%,$(UNAME_M)),)
+endif
+ifneq ($(filter aarch64%,$(UNAME_M)),)
+endif
+ifneq ($(filter armv6%,$(UNAME_M)),)
 	# Raspberry Pi 1, 2, 3
 	CFLAGS += -mfpu=neon-fp-armv8 -mfp16-format=ieee -mno-unaligned-access
 endif
@@ -50,7 +77,7 @@ endif
 #
 
 main: main.cpp ggml.o whisper.o
-	$(CXX) $(CXXFLAGS) main.cpp whisper.o ggml.o -o main
+	$(CXX) $(CXXFLAGS) main.cpp whisper.o ggml.o -o main $(LDFLAGS)
 	./main -h
 
 ggml.o: ggml.c ggml.h
@@ -59,8 +86,11 @@ ggml.o: ggml.c ggml.h
 whisper.o: whisper.cpp whisper.h
 	$(CXX) $(CXXFLAGS) -c whisper.cpp
 
+libwhisper.a: ggml.o whisper.o
+	ar rcs libwhisper.a ggml.o whisper.o
+
 clean:
-	rm -f *.o main
+	rm -f *.o main stream libwhisper.a
 
 #
 # Examples
@@ -69,7 +99,7 @@ clean:
 CC_SDL=`sdl2-config --cflags --libs`
 
 stream: stream.cpp ggml.o whisper.o
-	$(CXX) $(CXXFLAGS) stream.cpp ggml.o whisper.o -o stream $(CC_SDL)
+	$(CXX) $(CXXFLAGS) stream.cpp ggml.o whisper.o -o stream $(CC_SDL) $(LDFLAGS)
 
 #
 # Audio samples

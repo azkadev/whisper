@@ -16,12 +16,20 @@ dart pub add whisper_dart
 
 ## Compile library
 
+1. for linux
 ```bash
 git clone https://github.com/azkadev/whisper_dart.git
-cd whisper.cpp
-chmod 777 compile.sh
-bash ./download-ggml-model.sh base.en
-./compile.sh
+cd whisper_dart
+make
+sudo make install
+```
+
+2. for android
+```bash
+git clone https://github.com/azkadev/whisper_dart.git
+cd whisper_dart
+make
+make compile.android
 ```
 
 ## Tested on

@@ -6,3 +6,5 @@
 build/
 ffmpeg/
 railway/
+*.so
+*.o
