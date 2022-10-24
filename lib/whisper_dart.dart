@@ -44,10 +44,10 @@ class Whisper {
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
+      print(e);
       return WhisperResponse({"@type": "error"});
     }
   }
-  
 }
 
 class WhisperAudioconvert {
