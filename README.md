@@ -8,6 +8,11 @@ Whisper library speech to text offline,
 
 > this library is not in maintenance, just for example, if you want to transcribe audio to text please use [galaxeus_ai](https://github.com/galaxeus/galaxeus-ai)
 
+## Screenshot
+
+![Screenshot from 2022-10-24 17-28-26](https://user-images.githubusercontent.com/82513502/197506276-acd71547-5062-47c0-908c-95d3ed00b092.png)
+
+
 ## Install
 
 ```bash
