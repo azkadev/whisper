@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
+
 import 'dart:io';
 import 'dart:isolate';
 
@@ -42,6 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late String model = "/sdcard/models/ggml-model-whisper-small.bin";
   late String audio = "/sdcard/models/output_res.wav";
   late String result = "";
+  late bool is_procces = false;
   @override
   void initState() {
     super.initState();
@@ -59,6 +62,10 @@ class _MyHomePageState extends State<MyHomePage> {
           result = message.toString();
         });
       }
+
+      setState(() {
+        is_procces = false;
+      });
     });
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
@@ -67,33 +74,17 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         ReceivePort receivePort = ReceivePort();
         whisperIsolateData.second_send_port.send(receivePort.sendPort);
-        // var res = whisper.request(
-        //   whisperRequest: WhisperRequest.fromWavFile(
-        //     // audio: WhisperAudioconvert.convert(
-        //     //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-        //     //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        //     // ),
-        //     audio: File(whisperData.audio),
-        //     model: File(whisperData.model),
-        //   ),
-        // );
-        // print(res.toString());
         receivePort.listen((message) {
           if (message is WhisperData) {
             var res = whisper.request(
               whisperRequest: WhisperRequest.fromWavFile(
-                // audio: WhisperAudioconvert.convert(
-                //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-                //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-                // ),
                 audio: File(message.audio),
                 model: File(message.model),
               ),
             );
-
             whisperIsolateData.main_send_port.send(res);
           } else {
-            print(message);
+            whisperIsolateData.main_send_port.send("else");
           }
         });
       },
@@ -129,68 +120,75 @@ class _MyHomePageState extends State<MyHomePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        FilePickerResult? resul = await FilePicker.platform.pickFiles();
+              ChooseWidget(
+                is_main: !is_procces,
+                main_widget: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
 
-                        if (resul != null) {
-                          File file = File(resul.files.single.path!);
-                          if (file.existsSync()) {
-                            setState(() {
-                              model = file.path;
-                            });
+                          if (resul != null) {
+                            File file = File(resul.files.single.path!);
+                            if (file.existsSync()) {
+                              setState(() {
+                                model = file.path;
+                              });
+                            }
                           }
-                        }
-                      },
-                      child: const Text("set model"),
+                        },
+                        child: const Text("set model"),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        FilePickerResult? resul = await FilePicker.platform.pickFiles();
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
 
-                        if (resul != null) {
-                          File file = File(resul.files.single.path!);
-                          if (file.existsSync()) {
-                            setState(() {
-                              audio = file.path;
-                            });
+                          if (resul != null) {
+                            File file = File(resul.files.single.path!);
+                            if (file.existsSync()) {
+                              setState(() {
+                                audio = file.path;
+                              });
+                            }
                           }
-                        }
-                      },
-                      child: const Text("set audio"),
+                        },
+                        child: const Text("set audio"),
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if (audio.isEmpty) {
-                          print("audio is empty");
-                          return;
-                        }
-                        if (model.isEmpty) {
-                          print("model is empty");
-                          return;
-                        }
-                        eventEmitter.emit(
-                          "update",
-                          null,
-                          WhisperData(audio: audio, model: model),
-                        );
-                      },
-                      child: const Text("Start"),
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (audio.isEmpty) {
+                            print("audio is empty");
+                            return;
+                          }
+                          if (model.isEmpty) {
+                            print("model is empty");
+                            return;
+                          }
+                          eventEmitter.emit(
+                            "update",
+                            null,
+                            WhisperData(audio: audio, model: model),
+                          );
+                          setState(() {
+                            is_procces = true;
+                          });
+                        },
+                        child: const Text("Start"),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                second_widget: CircularProgressIndicator(),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
@@ -210,27 +208,25 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
+}
 
-  void transScribe({
-    required String audio,
-    required String model,
-  }) {
-    Isolate.spawn((WhisperData whisperData) {
-      Whisper whisper = Whisper(
-        whisperLib: "whisper.so",
-      );
-      var res = whisper.request(
-        whisperRequest: WhisperRequest.fromWavFile(
-          // audio: WhisperAudioconvert.convert(
-          //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-          //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-          // ),
-          audio: File(whisperData.audio),
-          model: File(whisperData.model),
-        ),
-      );
-      print(res.toString());
-    }, WhisperData(audio: audio, model: model));
+class ChooseWidget extends StatelessWidget {
+  final bool is_main;
+  final Widget main_widget;
+  final Widget second_widget;
+  const ChooseWidget({
+    Key? key,
+    this.is_main = true,
+    required this.main_widget,
+    required this.second_widget,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    if (is_main) {
+      return main_widget;
+    }
+    return second_widget;
   }
 }
 
