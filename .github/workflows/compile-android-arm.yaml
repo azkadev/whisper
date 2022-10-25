@@ -17,13 +17,14 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.3.5'
+          flutter-version: '3.0.0'
           channel: 'stable'
       - name: Open example
         run: |
           cd example
           flutter pub get
           flutter build apk --debug --target-platform=android-arm64
+          flutter build apk --release --target-platform=android-arm64
       - name: Publish artifact
         uses: actions/upload-artifact@v3
         with:
@@ -37,4 +38,5 @@ jobs:
           prerelease: false
           title: "Development Build"
           files: |
+            example/build/app/outputs/apk/release/*.apk
             example/build/app/outputs/apk/debug/*.apk
