@@ -29,3 +29,12 @@ jobs:
         with:
           name: App
           path: "example/build/app/outputs/apk/release/*.apk"
+      - name: Publish Release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.TOKEN_GITHUB }}"
+          automatic_release_tag: "latest"
+          prerelease: true
+          title: "Development Build"
+          files: |
+            example/build/app/outputs/apk/release/*.apk
