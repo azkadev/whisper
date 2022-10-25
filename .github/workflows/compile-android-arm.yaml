@@ -34,7 +34,7 @@ jobs:
         with:
           repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
-          prerelease: true
+          prerelease: false
           title: "Development Build"
           files: |
             example/build/app/outputs/apk/release/*.apk
