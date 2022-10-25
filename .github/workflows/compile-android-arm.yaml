@@ -25,7 +25,7 @@ jobs:
           flutter pub get
           flutter build apk --release --target-platform=android-arm64
       - name: Upload WSA
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: App
           path: "./example/build/app/outputs/apk/release/*.apk"
