@@ -39,6 +39,7 @@ dependencies:
   whisper_dart:
     path: ../
   file_picker: ^5.2.2
+  cool_alert: ^1.1.0
 
 dev_dependencies:
   flutter_test:

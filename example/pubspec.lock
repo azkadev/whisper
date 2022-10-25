@@ -71,6 +71,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.1"
+  cool_alert:
+    dependency: "direct main"
+    description:
+      name: cool_alert
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   crypto:
     dependency: transitive
     description:
@@ -127,6 +134,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.1"
+  flare_flutter:
+    dependency: transitive
+    description:
+      name: flare_flutter
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.2"
   flutter:
     dependency: "direct main"
     description: flutter
@@ -198,6 +212,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  lottie:
+    dependency: transitive
+    description:
+      name: lottie
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.4.3"
   matcher:
     dependency: transitive
     description:
@@ -345,4 +366,4 @@ packages:
     version: "0.1.1"
 sdks:
   dart: ">=2.18.0 <3.0.0"
-  flutter: ">=2.8.0"
+  flutter: ">=3.3.0"

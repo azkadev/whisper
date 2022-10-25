@@ -1,12 +1,14 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps
+// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, depend_on_referenced_packages
 
 import 'dart:io';
 import 'dart:isolate';
 
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:whisper_dart/whisper_dart.dart';
 import 'package:galaxeus_lib/galaxeus_lib.dart';
+import "package:cool_alert/cool_alert.dart";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +43,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   EventEmitter eventEmitter = EventEmitter();
 
-  late String model = "/sdcard/models/ggml-model-whisper-small.bin";
-  late String audio = "/sdcard/models/output_res.wav";
+  late String model = "";
+  late String audio = "";
   late String result = "";
   late bool is_procces = false;
   @override
@@ -166,12 +168,34 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
+                          if (is_procces) {
+
+                            return await CoolAlert.show(
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: "Tolong tunggu procces tadi sampai selesai ya"
+                            );
+                          }
                           if (audio.isEmpty) {
-                            print("audio is empty");
+                            await CoolAlert.show(
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: "Maaf audio kosong tolong setting dahulu ya"
+                            );
+                            if (kDebugMode) {
+                              print("audio is empty");
+                            }
                             return;
                           }
                           if (model.isEmpty) {
-                            print("model is empty");
+                            await CoolAlert.show(
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: "Maaf model kosong tolong setting dahulu ya"
+                            );
+                            if (kDebugMode) {
+                              print("model is empty");
+                            }
                             return;
                           }
                           eventEmitter.emit(
@@ -188,7 +212,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-                second_widget: CircularProgressIndicator(),
+                second_widget: const CircularProgressIndicator(),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
