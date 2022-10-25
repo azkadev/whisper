@@ -45,7 +45,10 @@ class Whisper {
       return WhisperResponse(result);
     } catch (e) {
       print(e);
-      return WhisperResponse({"@type": "error"});
+      return WhisperResponse({
+        "@type": "error",
+        "message": "${e.toString()}"
+      });
     }
   }
 }

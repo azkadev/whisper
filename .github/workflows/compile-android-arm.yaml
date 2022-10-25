@@ -24,13 +24,13 @@ jobs:
           cd example
           flutter pub get
           flutter build apk --release --target-platform=android-arm64
-      - name: Upload WSA
+      - name: Publish artifact
         uses: actions/upload-artifact@v3
         with:
           name: App
           path: "example/build/app/outputs/apk/release/*.apk"
       - name: Publish Release
-        uses: "marvinpinto/action-automatic-releases@latest"
+        uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ secrets.TOKEN_GITHUB }}"
           automatic_release_tag: "latest"
