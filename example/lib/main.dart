@@ -70,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
         Whisper whisper = Whisper(
-          whisperLib: "whisper.so",
+          whisperLib: "whisper_dart.so",
         );
         ReceivePort receivePort = ReceivePort();
         whisperIsolateData.second_send_port.send(receivePort.sendPort);
