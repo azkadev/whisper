@@ -18,29 +18,24 @@ class Whisper {
     }
   }
 
-  DynamicLibrary get openLib {
+  DynamicLibrary openLib({
+    String? whisperLib,
+  }) {
+    whisperLib ??= whisper_lib;
     if (Platform.isIOS || Platform.isMacOS) {
       return DynamicLibrary.process();
-    } else { 
+    } else {
       return DynamicLibrary.open(whisper_lib);
-    }
-  }
-
-  Map get test {
-    try {
-      var res = openLib.lookupFunction<Pointer<Utf8> Function(), Pointer<Utf8> Function()>("getString").call();
-      var result = json.decode(res.toDartString());
-      return result;
-    } catch (e) {
-      return {"@type": "error"};
     }
   }
 
   WhisperResponse request({
     required WhisperRequest whisperRequest,
+    String? whisperLib,
   }) {
+    whisperLib ??= whisper_lib;
     try {
-      var res = openLib.lookupFunction<whisper_request_native, whisper_request_native>("request").call(whisperRequest.toString().toNativeUtf8());
+      var res = openLib(whisperLib: whisperLib).lookupFunction<whisper_request_native, whisper_request_native>("request").call(whisperRequest.toString().toNativeUtf8());
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
