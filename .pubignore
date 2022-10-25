@@ -10,3 +10,6 @@ samples/
 
 ffmpeg/
 railway/
+
+*.so
+*.o
