@@ -20,11 +20,10 @@ jobs:
           flutter-version: '3.3.1'
           channel: 'stable'
       - name: Open example
-        run: cd example
-      - name: Install pub Dependencies
-        run: flutter pub get
-      - name: Build Android App
-        run: flutter build apk --release --target-platform=android-arm64
+        run:
+          cd example
+          flutter pub get
+          flutter build apk --release --target-platform=android-arm64
       - name: Upload WSA
         uses: actions/upload-artifact@v2
         with:
