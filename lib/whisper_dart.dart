@@ -25,7 +25,7 @@ class Whisper {
     if (Platform.isIOS || Platform.isMacOS) {
       return DynamicLibrary.process();
     } else {
-      return DynamicLibrary.open(whisper_lib);
+      return DynamicLibrary.open(whisperLib);
     }
   }
 
