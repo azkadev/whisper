@@ -5,6 +5,5 @@
 # Conventional directory for build output.
 build/
 ffmpeg/
-railway/
-*.so
+railway/ 
 *.o
