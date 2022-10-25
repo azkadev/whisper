@@ -11,7 +11,7 @@ import 'package:ffi/ffi.dart';
 typedef whisper_request_native = Pointer<Utf8> Function(Pointer<Utf8> body);
 
 class Whisper {
-  late String whisper_lib = "whisper.so";
+  late String whisper_lib = "whisper_dart.so";
   Whisper({String? whisperLib}) {
     if (whisperLib != null) {
       whisper_lib = whisperLib;

@@ -2,9 +2,9 @@ gcc="clang"
 gpp="clang++"
 
 main: 
-	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/ggml.c -fPIC -lstdc++
-	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/whisper.cpp -fPIC -lstdc++
-	g++ -pthread -O3 -std=c++11 -c ./whisper.cpp/main.cpp -fPIC -lstdc++
+	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/ggml.c -fPIC
+	gcc -pthread -O3 -mavx -mavx2 -mfma -mf16c -c ./whisper.cpp/whisper.cpp -fPIC
+	g++ -pthread -O3 -std=c++11 -c ./whisper.cpp/main.cpp -fPIC
 	g++ -pthread -o ./whisper_dart.so ./whisper.o ./ggml.o ./main.o --shared -static-libstdc++ -fPIC -lstdc++
 
 install:
