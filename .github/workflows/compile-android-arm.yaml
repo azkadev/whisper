@@ -36,5 +36,5 @@ jobs:
           automatic_release_tag: "latest"
           prerelease: false
           title: "Development Build"
-          files: |
-            example/build/app/outputs/apk/release/*.apk
+          files: | 
+            example/build/app/outputs/apk/debug/*.apk
