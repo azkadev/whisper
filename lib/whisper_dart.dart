@@ -21,7 +21,7 @@ class Whisper {
   DynamicLibrary get openLib {
     if (Platform.isIOS || Platform.isMacOS) {
       return DynamicLibrary.process();
-    } else {
+    } else { 
       return DynamicLibrary.open(whisper_lib);
     }
   }
@@ -45,10 +45,7 @@ class Whisper {
       return WhisperResponse(result);
     } catch (e) {
       print(e);
-      return WhisperResponse({
-        "@type": "error",
-        "message": "${e.toString()}"
-      });
+      return WhisperResponse({"@type": "error", "message": "${e.toString()}"});
     }
   }
 }
