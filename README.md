@@ -6,7 +6,7 @@ Whisper library speech to text offline,
 1. [Whisper-Official](https://github.com/openai/whisper)
 2. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
 
-> this library is not in maintenance, just for example, if you want to transcribe audio to text please use [galaxeus_ai](https://github.com/galaxeus/galaxeus-ai)
+> this library is not in maintenance, just for example, if you want to transcribe audio to text please use [galaxeus_ai](https://github.com/galaxeus/galaxeus_ai)
 
 ## Screenshot
 
