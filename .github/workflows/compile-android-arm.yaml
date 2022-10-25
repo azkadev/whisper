@@ -23,7 +23,7 @@ jobs:
         run: |
           cd example
           flutter pub get
-          flutter build apk --release --target-platform=android-arm64
+          flutter build apk
       - name: Publish artifact
         uses: actions/upload-artifact@v3
         with:
