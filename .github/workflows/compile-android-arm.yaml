@@ -23,12 +23,12 @@ jobs:
         run: |
           cd example
           flutter pub get
-          flutter build apk --release --target-platform=android-arm64
+          flutter build apk --debug --target-platform=android-arm64
       - name: Publish artifact
         uses: actions/upload-artifact@v3
         with:
           name: App
-          path: "example/build/app/outputs/apk/release/*.apk"
+          path: "example/build/app/outputs/apk/debug/*.apk"
       - name: Publish Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -37,4 +37,4 @@ jobs:
           prerelease: false
           title: "Development Build"
           files: |
-            example/build/app/outputs/apk/release/*.apk
+            example/build/app/outputs/apk/debug/*.apk
