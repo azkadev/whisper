@@ -77,6 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
         receivePort.listen((message) {
           if (message is WhisperData) {
             var res = whisper.request(
+              whisperLib: "whisper_dart.so",
               whisperRequest: WhisperRequest.fromWavFile(
                 audio: File(message.audio),
                 model: File(message.model),
