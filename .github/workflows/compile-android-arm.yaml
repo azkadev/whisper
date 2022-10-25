@@ -20,13 +20,12 @@ jobs:
           flutter-version: '3.3.1'
           channel: 'stable'
       - name: Open example
-        run:
+        run: |
           cd example
           flutter pub get
           flutter build apk --release --target-platform=android-arm64
-          ls
       - name: Upload WSA
         uses: actions/upload-artifact@v3
         with:
           name: App
-          path: "build/app/outputs/apk/release/*.apk"
+          path: "example/build/app/outputs/apk/release/*.apk"
