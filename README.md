@@ -24,16 +24,18 @@ dart pub add whisper_dart
 
 1. for linux
 ```bash
-git clone https://github.com/azkadev/whisper_dart.git
+git clone --recursive https://github.com/azkadev/whisper_dart.git
 cd whisper_dart
+cd native_lib
 make
 sudo make install
 ```
 
 2. for android
 ```bash
-git clone https://github.com/azkadev/whisper_dart.git
+git clone --recursive https://github.com/azkadev/whisper_dart.git
 cd whisper_dart
+cd native_lib
 make
 make compile.android
 ```
