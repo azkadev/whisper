@@ -9,7 +9,7 @@ void main(List<String> arguments) {
   DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
-    whisperLib: "whisper.cpp/whisper.so",
+    whisperLib: "native_lib/whisper_dart.so",
   );
   try {
     var res = whisper.request(

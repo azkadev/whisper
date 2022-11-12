@@ -41,6 +41,7 @@ make compile.android
 ```
 
 ## Tested on
+I only have this device, so sorry I can't test other devices
 1. OS: Ubuntu 20.4
    CPU: Amd Ryzen 5500u
    Ram: 8gb
