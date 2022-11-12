@@ -44,6 +44,9 @@ make compile.android
 1. OS: Ubuntu 20.4
    CPU: Amd Ryzen 5500u
    Ram: 8gb
+2. Os: Android 11
+   CPU: Snapdragon 665
+   Ram: 3gb
 
 ## example
 example dengan auto convert dari semua jenis audio ke wav whisper
