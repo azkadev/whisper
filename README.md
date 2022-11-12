@@ -50,8 +50,7 @@ I only have this device, so sorry I can't test other devices
    Ram: 3gb
 
 ## example
-example dengan auto convert dari semua jenis audio ke wav whisper
-
+example dengan auto convert dari semua jenis audio ke wav whisper, `ffmpeg` harus terinstall
 ```dart
 // ignore_for_file: non_constant_identifier_names
 import 'package:galaxeus_lib/galaxeus_lib.dart';
