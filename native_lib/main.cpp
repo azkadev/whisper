@@ -188,7 +188,7 @@ extern "C"
             wparams.print_realtime = false;
             wparams.print_progress = false;
             wparams.print_timestamps = !params.no_timestamps;
-            wparams.print_special_tokens = params.print_special_tokens;
+            // wparams.print_special_tokens = params.print_special_tokens;
             wparams.translate = params.translate;
             wparams.language = params.language.c_str();
             wparams.n_threads = params.n_threads;
