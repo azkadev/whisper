@@ -1,29 +1,24 @@
-// ignore_for_file: non_constant_identifier_names
+// ignore_for_file: non_constant_identifier_names, avoid_print
 
-import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:universal_io/io.dart';
+import 'dart:io';
+
 import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
+  Directory current = Directory.current;
   DateTime time = DateTime.now();
-  // print(res);
-  Whisper whisper = Whisper(
-    whisperLib: "native_lib/whisper_dart.so",
-  );
+
+  Whisper whisper = Whisper();
   try {
     var res = whisper.request(
-      whisperRequest: WhisperRequest.fromWavFile(
-        // audio: WhisperAudioconvert.convert(
-        //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-        //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        // ),
-        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+      request: WhisperRequest.fromWavFile(
+        audio: File("${current.path}/samples/your_sample.wav"),
+        // check it here: https://github.com/ggerganov/whisper.cpp/tree/master/models
+        model: File("${current.path}/models/your_model.bin"),
       ),
     );
-    print(res.toString());
-    print(convertToAgo(time.millisecondsSinceEpoch));
+    print(res.text);
+    print(time.millisecondsSinceEpoch);
   } catch (e) {
     print(e);
   }
