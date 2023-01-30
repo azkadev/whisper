@@ -14,9 +14,16 @@ using json = nlohmann::json;
 extern "C"
 {
 
-    void print(std::string value)
-    {
-        std::cout << value << std::endl;
+    // void print(std::string value)
+    // {
+    //     std::cout << value << std::endl;
+    // }
+
+    void (*print)(char *a);
+
+    void initialize(void (*printCallback)(char *)) {
+        print = printCallback;
+        print(strdup("C library initialized"));
     }
 
     char *jsonToChar(json jsonData)
@@ -85,6 +92,7 @@ extern "C"
         params.audio = jsonBody["audio"];
         json jsonResult;
         jsonResult["@type"] = "transcribe";
+        jsonResult["message"] = "success!";
 
         if (whisper_lang_id(params.language.c_str()) == -1)
         {
@@ -100,7 +108,7 @@ extern "C"
 
         // whisper init
 
-        struct whisper_context *ctx = whisper_init(params.model.c_str());
+        struct whisper_context *ctx = whisper_init_from_file(params.model.c_str());
         std::string text_result = "";
         // for (int f = 0; f < (int)params.fname_inp.size(); ++f)
         // {
@@ -171,15 +179,15 @@ extern "C"
                 {
                     params.language = "en";
                     params.translate = false;
-                    // printf("%s: WARNING: model is not multilingual, ignoring language and translation options\n", __func__);
+                    printf("%s: WARNING: model is not multilingual, ignoring language and translation options\n", __func__);
                 }
             }
-            // printf("%s: processing '%s' (%d samples, %.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
-            //        __func__, fname_inp.c_str(), int(pcmf32.size()), float(pcmf32.size()) / WHISPER_SAMPLE_RATE, params.n_threads,
-            //        params.language.c_str(),
-            //        params.translate ? "translate" : "transcribe",
-            //        params.no_timestamps ? 0 : 1);
-            // printf("\n");
+            printf("%s: processing '%s' (%d samples, %.1f sec), %d threads, lang = %s, task = %s, timestamps = %d ...\n",
+                   __func__, fname_inp.c_str(), int(pcmf32.size()), float(pcmf32.size()) / WHISPER_SAMPLE_RATE, params.n_threads,
+                   params.language.c_str(),
+                   params.translate ? "translate" : "transcribe",
+                   params.no_timestamps ? 0 : 1);
+            printf("\n");
         }
         // run the inference
         {
@@ -213,15 +221,15 @@ extern "C"
                     text_result += str;
                     if (params.no_timestamps)
                     {
-                        // printf("%s", text);
-                        // fflush(stdout);
+                        printf("%s", text);
+                        fflush(stdout);
                     }
                     else
                     {
-                        // const int64_t t0 = whisper_full_get_segment_t0(ctx, i);
-                        // const int64_t t1 = whisper_full_get_segment_t1(ctx, i);
+                        const int64_t t0 = whisper_full_get_segment_t0(ctx, i);
+                        const int64_t t1 = whisper_full_get_segment_t1(ctx, i);
 
-                        // printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text);
+                        printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text);
                     }
                 }
             }
@@ -259,7 +267,8 @@ extern "C"
     {
         json jsonBody;
         jsonBody["@type"] = "al";
-        print(transcribe(jsonBody).dump());
+        transcribe(jsonBody).dump();
+        fprintf(stderr, "%s: Proccess finished.", __func__);
         return 0;
     }
 }
