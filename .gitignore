@@ -7,3 +7,7 @@ build/
 ffmpeg/
 railway/ 
 *.o
+
+*.wav
+whisper_api/
+whisper_api_railway/
