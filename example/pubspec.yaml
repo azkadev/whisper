@@ -38,7 +38,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   whisper_dart:
     path: ../
-  file_picker: ^5.2.2
+  file_picker: ^5.2.5
   cool_alert: ^1.1.0
 
 dev_dependencies:
