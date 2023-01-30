@@ -1,5 +1,6 @@
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, depend_on_referenced_packages
 
+import 'dart:ffi';
 import 'dart:io';
 import 'dart:isolate';
 
@@ -12,6 +13,7 @@ import "package:cool_alert/cool_alert.dart";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  DynamicLibrary.open("whisper.so");
   runApp(const MyApp());
 }
 
