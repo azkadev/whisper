@@ -32,10 +32,11 @@ jobs:
       #     path: "example/build/app/outputs/apk/debug/*.apk"
       - name: Publish Release
         uses: marvinpinto/action-automatic-releases@latest
-        with:
-          repo_token: github.token
-          automatic_release_tag: "latest"
+        with: 
+          repo_token: "${{ github.token }}"
+          automatic_release_tag: "latest-linux"
           prerelease: false
           title: "Development Build"
           files: |
             example/build/app/outputs/apk/release/*.apk 
+ 
