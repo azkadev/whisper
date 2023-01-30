@@ -307,6 +307,7 @@ json transcribe(json jsonBody)
     whisper_free(ctx);
     return jsonResult;
 }
+
 extern "C"
 {
     char *request(char *body)
