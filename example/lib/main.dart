@@ -131,8 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
-                          FilePickerResult? resul =
-                              await FilePicker.platform.pickFiles();
+                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
 
                           if (resul != null) {
                             File file = File(resul.files.single.path!);
@@ -150,8 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
-                          FilePickerResult? resul =
-                              await FilePicker.platform.pickFiles();
+                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
 
                           if (resul != null) {
                             File file = File(resul.files.single.path!);
@@ -171,28 +169,24 @@ class _MyHomePageState extends State<MyHomePage> {
                         onPressed: () async {
                           if (is_procces) {
                             return await CoolAlert.show(
-                                context: context,
-                                type: CoolAlertType.info,
-                                text:
-                                    "Tolong tunggu procces tadi sampai selesai ya");
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: "Tolong tunggu procces tadi sampai selesai ya",
+                            );
                           }
                           if (audio.isEmpty) {
                             await CoolAlert.show(
-                                context: context,
-                                type: CoolAlertType.info,
-                                text:
-                                    "Maaf audio kosong tolong setting dahulu ya");
+                              context: context,
+                              type: CoolAlertType.info,
+                              text: "Maaf audio kosong tolong setting dahulu ya",
+                            );
                             if (kDebugMode) {
                               print("audio is empty");
                             }
                             return;
                           }
                           if (model.isEmpty) {
-                            await CoolAlert.show(
-                                context: context,
-                                type: CoolAlertType.info,
-                                text:
-                                    "Maaf model kosong tolong setting dahulu ya");
+                            await CoolAlert.show(context: context, type: CoolAlertType.info, text: "Maaf model kosong tolong setting dahulu ya");
                             if (kDebugMode) {
                               print("model is empty");
                             }

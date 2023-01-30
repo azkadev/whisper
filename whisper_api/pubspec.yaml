@@ -1,0 +1,19 @@
+name: whisper_api
+description: A sample command-line application.
+version: 1.0.0 
+publish_to: none
+environment:
+  sdk: '>=2.19.0 <3.0.0'
+
+# dependencies:
+#   path: ^1.8.0
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
+dependencies:
+  alfred: ^1.0.0+1
+  galaxeus_lib: ^0.0.46
+  path: ^1.8.3
+  whisper_dart:
+   path: ../

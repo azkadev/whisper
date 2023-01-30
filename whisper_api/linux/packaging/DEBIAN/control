@@ -1,0 +1,8 @@
+Maintainer: "azka"
+Package: whisper-api
+Version: 0.0
+Priority: optional
+Architecture: amd64
+Essential: no
+Description: "A new Flutter project."
+Homepage: "https://youtube.com/@azkadev"
