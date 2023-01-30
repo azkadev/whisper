@@ -1,18 +1,15 @@
 # Whisper
 
-Whisper library speech to text offline, 
+Whisper library speech to text offline,
 
 ## Refrence
+
 1. [Whisper-Official](https://github.com/openai/whisper)
 2. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
-
-> this library is not in maintenance, just for example, if you want to transcribe audio to text please use [galaxeus_ai](https://github.com/galaxeus/galaxeus_ai)
 
 ## Screenshot
 
 [![Screenshot from 2022-10-24 17-28-26](https://user-images.githubusercontent.com/82513502/197506276-acd71547-5062-47c0-908c-95d3ed00b092.png)](https://www.youtube.com/watch?v=qQWPE3EvOS0)
-
-
 
 ## Install
 
@@ -20,54 +17,41 @@ Whisper library speech to text offline,
 dart pub add whisper_dart
 ```
 
-## Compile library
-
-1. for linux
-```bash
-git clone --recursive https://github.com/azkadev/whisper_dart.git
-cd whisper_dart
-cd native_lib
-make
-sudo make install
-```
-
-2. for android
-```bash
-git clone --recursive https://github.com/azkadev/whisper_dart.git
-cd whisper_dart
-cd native_lib
-make
-make compile.android
-```
-
 ## Tested on
-I only have this device, so sorry I can't test other devices
+
 1. OS: Ubuntu 20.4
-   CPU: Amd Ryzen 5500u
+   CPU: AMD Ryzen 5500u
    Ram: 8gb
-2. Os: Android 11
+2. OS: Windows 11 Pro 22H2 (22621.1105)
+   CPU: AMD Ryzen 3600
+   Ram: 16gb
+3. OS: Android 11
    CPU: Snapdragon 665
    Ram: 3gb
+4. OS: Android 13
+   CPU: Snapdragon 730
+   Ram: 4gb
 
 ## example
-example dengan auto convert dari semua jenis audio ke wav whisper, `ffmpeg` harus terinstall
+
+auto convert a given audio to a proper wav accepted by whisper, `ffmpeg` must be installed
+
 ```dart
-// ignore_for_file: non_constant_identifier_names
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:universal_io/io.dart';
 import 'package:whisper_dart/whisper_dart.dart';
 import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
-  // print(res);
+  DateTime time = DateTime.now();
+
   Whisper whisper = Whisper(
     whisperLib: "whisper.cpp/whisper.so",
   );
   try {
     var res = whisper.request(
       whisperRequest: WhisperRequest.fromWavFile(
-        /// auto convert to wav 16 
+        /// auto convert to wav 16
         audio: WhisperAudioconvert.convert(
           audioInput: File("samples/audio.ogg"),
           audioOutput: File("samples/output.wav"),
@@ -82,27 +66,20 @@ void main(List<String> arguments) {
   }
 }
 ```
-result
-```bash
-{
-  "@type":"transcribe",
-  "text":" Baby, aku pergi dulu ya, babai sayang. *muach*"
-}
-```
 
 ## example 2
 
 example convert audio to text without auto convert
+
 ```dart
-// ignore_for_file: non_constant_identifier_names
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:universal_io/io.dart';
 import 'package:whisper_dart/whisper_dart.dart';
 import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
-  // print(res);
+  DateTime time = DateTime.now();
+
   Whisper whisper = Whisper(
     whisperLib: "whisper.cpp/whisper.so",
   );
@@ -122,13 +99,14 @@ void main(List<String> arguments) {
 ```
 
 result
+
 ```json
 {
-  "@type":"transcribe",
-  "text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
+  "@type": "transcribe",
+  "text": " And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
 }
 ```
 
-Language Support 
+Language Support
 
 ![](https://github.com/openai/whisper/raw/main/language-breakdown.svg)
