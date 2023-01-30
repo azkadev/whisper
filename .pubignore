@@ -14,3 +14,6 @@ railway/
 *.so
 *.o
 native_lib/
+
+whisper_api/
+whisper_api_railway/
