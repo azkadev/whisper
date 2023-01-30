@@ -1,6 +1,6 @@
-# example
+# whisper_dart_example
 
-A new Flutter project.
+Demonstrates how to use the whisper_dart plugin.
 
 ## Getting Started
 
