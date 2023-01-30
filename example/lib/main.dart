@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, depend_on_referenced_packages
-
 import 'dart:io';
 import 'dart:isolate';
 
@@ -44,7 +42,8 @@ class _MyHomePageState extends State<MyHomePage> {
   late String model = "";
   late String audio = "";
   late String result = "";
-  late bool is_procces = false;
+  late bool isProccess = false;
+
   @override
   void initState() {
     super.initState();
@@ -64,43 +63,41 @@ class _MyHomePageState extends State<MyHomePage> {
       }
 
       setState(() {
-        is_procces = false;
+        isProccess = false;
       });
     });
+
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
-        Whisper whisper = Whisper(
-          whisperLib: "whisper_dart.so",
-        );
+        Whisper whisper = Whisper();
         ReceivePort receivePort = ReceivePort();
-        whisperIsolateData.second_send_port.send(receivePort.sendPort);
+        whisperIsolateData.secondSendPort.send(receivePort.sendPort);
         receivePort.listen((message) {
           if (message is WhisperData) {
             var res = whisper.request(
-              whisperLib: "whisper_dart.so",
-              whisperRequest: WhisperRequest.fromWavFile(
+              request: WhisperRequest.fromWavFile(
                 audio: File(message.audio),
                 model: File(message.model),
               ),
             );
-            whisperIsolateData.main_send_port.send(res);
+            whisperIsolateData.mainSendPort.send(res);
           } else {
-            whisperIsolateData.main_send_port.send("else");
+            whisperIsolateData.mainSendPort.send("else");
           }
         });
       },
       WhisperIsolateData(
-        main_send_port: receivePort.sendPort,
-        second_send_port: secondReceivePort.sendPort,
+        mainSendPort: receivePort.sendPort,
+        secondSendPort: secondReceivePort.sendPort,
       ),
     );
 
     final port = secondReceivePort.asBroadcastStream();
-    final send_port = await port.first;
-    if (send_port is SendPort) {
+    final sendPort = await port.first;
+    if (sendPort is SendPort) {
       eventEmitter.on("update", null, (ev, context) {
         if (ev.eventData is WhisperData) {
-          send_port.send((ev.eventData as WhisperData));
+          sendPort.send((ev.eventData as WhisperData));
         }
       });
     }
@@ -122,8 +119,8 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ChooseWidget(
-                is_main: !is_procces,
-                main_widget: Row(
+                isMain: !isProccess,
+                mainWidget: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -131,7 +128,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
-                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
+                          FilePickerResult? resul =
+                              await FilePicker.platform.pickFiles();
 
                           if (resul != null) {
                             File file = File(resul.files.single.path!);
@@ -149,7 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
-                          FilePickerResult? resul = await FilePicker.platform.pickFiles();
+                          FilePickerResult? resul =
+                              await FilePicker.platform.pickFiles();
 
                           if (resul != null) {
                             File file = File(resul.files.single.path!);
@@ -167,20 +166,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.all(10),
                       child: ElevatedButton(
                         onPressed: () async {
-                          if (is_procces) {
-
+                          if (isProccess) {
                             return await CoolAlert.show(
-                              context: context,
-                              type: CoolAlertType.info,
-                              text: "Tolong tunggu procces tadi sampai selesai ya"
-                            );
+                                context: context,
+                                type: CoolAlertType.info,
+                                text:
+                                    "Tolong tunggu procces tadi sampai selesai ya");
                           }
                           if (audio.isEmpty) {
                             await CoolAlert.show(
-                              context: context,
-                              type: CoolAlertType.info,
-                              text: "Maaf audio kosong tolong setting dahulu ya"
-                            );
+                                context: context,
+                                type: CoolAlertType.info,
+                                text:
+                                    "Maaf audio kosong tolong setting dahulu ya");
                             if (kDebugMode) {
                               print("audio is empty");
                             }
@@ -188,10 +186,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           }
                           if (model.isEmpty) {
                             await CoolAlert.show(
-                              context: context,
-                              type: CoolAlertType.info,
-                              text: "Maaf model kosong tolong setting dahulu ya"
-                            );
+                                context: context,
+                                type: CoolAlertType.info,
+                                text:
+                                    "Maaf model kosong tolong setting dahulu ya");
                             if (kDebugMode) {
                               print("model is empty");
                             }
@@ -203,7 +201,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             WhisperData(audio: audio, model: model),
                           );
                           setState(() {
-                            is_procces = true;
+                            isProccess = true;
                           });
                         },
                         child: const Text("Start"),
@@ -211,19 +209,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   ],
                 ),
-                second_widget: const CircularProgressIndicator(),
+                secondWidget: const CircularProgressIndicator(),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
-                child: Text("model: ${model}"),
+                child: Text("model: $model"),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
-                child: Text("audio: ${audio}"),
+                child: Text("audio: $audio"),
               ),
               Padding(
                 padding: const EdgeInsets.all(10),
-                child: Text("Result: ${result}"),
+                child: Text("Result: $result"),
               ),
             ],
           ),
@@ -234,22 +232,22 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 
 class ChooseWidget extends StatelessWidget {
-  final bool is_main;
-  final Widget main_widget;
-  final Widget second_widget;
+  final bool isMain;
+  final Widget mainWidget;
+  final Widget secondWidget;
   const ChooseWidget({
     Key? key,
-    this.is_main = true,
-    required this.main_widget,
-    required this.second_widget,
+    this.isMain = true,
+    required this.mainWidget,
+    required this.secondWidget,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    if (is_main) {
-      return main_widget;
+    if (isMain) {
+      return mainWidget;
     }
-    return second_widget;
+    return secondWidget;
   }
 }
 
@@ -260,10 +258,10 @@ class WhisperData {
 }
 
 class WhisperIsolateData {
-  final SendPort main_send_port;
-  final SendPort second_send_port;
+  final SendPort mainSendPort;
+  final SendPort secondSendPort;
   WhisperIsolateData({
-    required this.main_send_port,
-    required this.second_send_port,
+    required this.mainSendPort,
+    required this.secondSendPort,
   });
 }
