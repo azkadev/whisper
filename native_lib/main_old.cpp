@@ -2,18 +2,13 @@
 
 #define DR_WAV_IMPLEMENTATION
 #include "whisper.cpp/examples/dr_wav.h"
-
-#include <cmath>
-#include <fstream>
 #include <cstdio>
 #include <string>
 #include <thread>
 #include <vector>
-
 #include <iostream>
 #include "json/json.hpp"
 #include <stdio.h>
-
 using json = nlohmann::json;
 
 extern "C"
@@ -45,57 +40,19 @@ extern "C"
         return ch;
     }
 
-    // //  500 -> 00:05.000
-    // // 6000 -> 01:00.000
-    // std::string to_timestamp(int64_t t)
-    // {
-    //     int64_t sec = t / 100;
-    //     int64_t msec = t - sec * 100;
-    //     int64_t min = sec / 60;
-    //     sec = sec - min * 60;
-
-    //     char buf[32];
-    //     snprintf(buf, sizeof(buf), "%02d:%02d.%03d", (int)min, (int)sec, (int)msec);
-
-    //     return std::string(buf);
-    // }
-
-    // Terminal color map. 10 colors grouped in ranges [0.0, 0.1, ..., 0.9]
-    // Lowest is red, middle is yellow, highest is green.
-    const std::vector<std::string> k_colors = {
-        "\033[38;5;196m",
-        "\033[38;5;202m",
-        "\033[38;5;208m",
-        "\033[38;5;214m",
-        "\033[38;5;220m",
-        "\033[38;5;226m",
-        "\033[38;5;190m",
-        "\033[38;5;154m",
-        "\033[38;5;118m",
-        "\033[38;5;82m",
-    };
-
     //  500 -> 00:05.000
     // 6000 -> 01:00.000
-    std::string to_timestamp(int64_t t, bool comma = false)
+    std::string to_timestamp(int64_t t)
     {
-        int64_t msec = t * 10;
-        int64_t hr = msec / (1000 * 60 * 60);
-        msec = msec - hr * (1000 * 60 * 60);
-        int64_t min = msec / (1000 * 60);
-        msec = msec - min * (1000 * 60);
-        int64_t sec = msec / 1000;
-        msec = msec - sec * 1000;
+        int64_t sec = t / 100;
+        int64_t msec = t - sec * 100;
+        int64_t min = sec / 60;
+        sec = sec - min * 60;
 
         char buf[32];
-        snprintf(buf, sizeof(buf), "%02d:%02d:%02d%s%03d", (int)hr, (int)min, (int)sec, comma ? "," : ".", (int)msec);
+        snprintf(buf, sizeof(buf), "%02d:%02d.%03d", (int)min, (int)sec, (int)msec);
 
         return std::string(buf);
-    }
-
-    int timestamp_to_sample(int64_t t, int n_samples)
-    {
-        return std::max(0, std::min((int)n_samples - 1, (int)((t * WHISPER_SAMPLE_RATE) / 100)));
     }
 
     // command-line parameters
@@ -104,49 +61,15 @@ extern "C"
         int32_t seed = -1; // RNG seed, not used currently
         int32_t n_threads = std::min(4, (int32_t)std::thread::hardware_concurrency());
 
-        int32_t n_processors = 1;
-        int32_t offset_t_ms = 0;
-        int32_t offset_n = 0;
-        int32_t duration_ms = 0;
-        int32_t max_context = -1;
-        int32_t max_len = 0;
-        int32_t best_of = 5;
-        int32_t beam_size = -1;
-
-        float word_thold = 0.01f;
-        float entropy_thold = 2.40f;
-        float logprob_thold = -1.00f;
-
         bool verbose = false;
-        bool print_special_tokens = false;
-        bool speed_up = false;
         bool translate = false;
-        bool diarize = false;
-        bool no_fallback = false;
-        bool output_txt = false;
-        bool output_vtt = false;
-        bool output_srt = false;
-        bool output_wts = false;
-        bool output_csv = false;
-        bool print_special = false;
-        bool print_colors = false;
-        bool print_progress = false;
+        bool print_special_tokens = false;
         bool no_timestamps = false;
 
         std::string language = "id";
-        std::string prompt;
         std::string model = "models/ggml-model-whisper-small.bin";
         std::string audio = "samples/jfk.wav";
-        std::vector<std::string> fname_inp = {};
-        std::vector<std::string> fname_outp = {};
     };
-
-struct whisper_print_user_data
-{
-    const whisper_params *params;
-
-    const std::vector<std::vector<float>> *pcmf32s;
-};
 
     json transcribe(json jsonBody)
     {
