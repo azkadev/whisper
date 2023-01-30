@@ -5,7 +5,8 @@ import 'package:universal_io/io.dart';
 import 'package:whisper_dart/whisper_dart.dart';
 import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
-void main(List<String> arguments) {
+void main(List<String> arguments) async {
+  
   DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
@@ -21,7 +22,7 @@ void main(List<String> arguments) {
         audio: File(
             "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
         model: File(
-            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-base.bin"),
       ),
     );
     print(res.toString());
