@@ -70,14 +70,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
         Whisper whisper = Whisper(
-          whisperLib: "whisper_dart.so",
+          whisperLib: "whisper.so",
         );
         ReceivePort receivePort = ReceivePort();
         whisperIsolateData.second_send_port.send(receivePort.sendPort);
         receivePort.listen((message) {
           if (message is WhisperData) {
             var res = whisper.request(
-              whisperLib: "whisper_dart.so",
+              whisperLib: "whisper.so",
               whisperRequest: WhisperRequest.fromWavFile(
                 audio: File(message.audio),
                 model: File(message.model),
