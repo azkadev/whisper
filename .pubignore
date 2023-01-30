@@ -13,3 +13,4 @@ railway/
 
 *.so
 *.o
+native_lib/

@@ -18,8 +18,10 @@ void main(List<String> arguments) {
         //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
         //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
         // ),
-        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+        audio: File(
+            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        model: File(
+            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
       ),
     );
     print(res.toString());
