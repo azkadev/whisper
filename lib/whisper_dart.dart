@@ -11,7 +11,7 @@ import 'package:ffi/ffi.dart';
 typedef whisper_request_native = Pointer<Utf8> Function(Pointer<Utf8> body);
 
 class Whisper {
-  late String whisper_lib = "whisper_dart.so";
+  String whisper_lib = "whisper_dart.so";
   Whisper({String? whisperLib}) {
     if (whisperLib != null) {
       whisper_lib = whisperLib;
@@ -35,10 +35,9 @@ class Whisper {
   }) {
     whisperLib ??= whisper_lib;
     try {
-      var res = openLib(whisperLib: whisperLib)
-          .lookupFunction<whisper_request_native, whisper_request_native>(
-              "request")
-          .call(whisperRequest.toString().toNativeUtf8());
+      var res = openLib(
+        whisperLib: whisperLib,
+      ).lookupFunction<whisper_request_native, whisper_request_native>("request").call(whisperRequest.toString().toNativeUtf8());
       Map result = json.decode(res.toDartString());
       return WhisperResponse(result);
     } catch (e) {
@@ -63,14 +62,7 @@ class WhisperAudioconvert {
   }) {
     timeout ??= Duration(seconds: 10);
     DateTime time_expire = DateTime.now().add(timeout);
-    var res = FFmpeg(pathFFmpeg: pathFFmpeg).convertAudioToWavWhisper(
-        pathAudioInput: audioInput.path,
-        pathAudioOutput: audioOutput.path,
-        pathFFmpeg: pathFFmpeg,
-        fFmpegArgs: fFmpegArgs,
-        workingDirectory: workingDirectory,
-        environment: environment,
-        runInShell: runInShell);
+    var res = FFmpeg(pathFFmpeg: pathFFmpeg).convertAudioToWavWhisper(pathAudioInput: audioInput.path, pathAudioOutput: audioOutput.path, pathFFmpeg: pathFFmpeg, fFmpegArgs: fFmpegArgs, workingDirectory: workingDirectory, environment: environment, runInShell: runInShell);
     while (true) {
       if (DateTime.now().isAfter(time_expire)) {
         throw "time out";
@@ -90,11 +82,9 @@ class WhisperAudioconvert {
 
 /// Don't forget to run malloc.free with result!
 Pointer<Pointer<Utf8>> strListToPointer(List<String> strings) {
-  List<Pointer<Utf8>> utf8PointerList =
-      strings.map((str) => str.toNativeUtf8()).toList();
+  List<Pointer<Utf8>> utf8PointerList = strings.map((str) => str.toNativeUtf8()).toList();
 
-  final Pointer<Pointer<Utf8>> pointerPointer =
-      malloc.allocate(utf8PointerList.length);
+  final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
 
   strings.asMap().forEach((index, utf) {
     pointerPointer[index] = utf8PointerList[index];
@@ -107,11 +97,9 @@ class WhisperArgs {
   late List<String> args;
   WhisperArgs(this.args);
   Pointer<Pointer<Utf8>> toNativeList() {
-    List<Pointer<Utf8>> utf8PointerList =
-        args.map((str) => str.toNativeUtf8()).toList();
+    List<Pointer<Utf8>> utf8PointerList = args.map((str) => str.toNativeUtf8()).toList();
 
-    final Pointer<Pointer<Utf8>> pointerPointer =
-        malloc.allocate(utf8PointerList.length);
+    final Pointer<Pointer<Utf8>> pointerPointer = malloc.allocate(utf8PointerList.length);
 
     args.asMap().forEach((index, utf) {
       pointerPointer[index] = utf8PointerList[index];
