@@ -1,0 +1,58 @@
+name: Twst Compile Windows
+on: [workflow_dispatch]
+
+jobs:
+  build:
+    name: Compile Windows @azkadev
+    runs-on: windows-latest
+
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.7.0"
+          channel: "stable"
+      - name: check dart version
+        run: dart --version
+      - name: Install Dependencies
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt update -y
+            sudo apt-get install -y make git zlib1g-dev libssl-dev gperf cmake clang libc++-dev libc++abi-dev php-cli cmake g++
+            sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+          fi
+        shell: bash
+      - name: Mkdir result
+        run: mkdir result
+      - name: Set Flutter enable devices
+        continue-on-error: true
+        run: |
+          flutter config --enable-web
+          flutter config --enable-linux-desktop
+          flutter config --enable-macos-desktop
+          flutter config --enable-windows-desktop
+          flutter config --enable-android
+          flutter config --enable-ios
+
+      # Compile specta app
+      - name: Compile Application For Desktop
+        continue-on-error: true
+        run: |
+          cd package/whisper_flutter/example
+          flutter pub get
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            flutter build linux --release
+          fi
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            flutter build windows --release
+          fi
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            flutter build macos --release
+          fi
+        shell: bash
