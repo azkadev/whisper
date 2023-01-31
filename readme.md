@@ -1,6 +1,6 @@
 # Whisper 
 
-Whisper adalah project open source dari [openai](https://github.com/openai) untuk mengeluarkan text dari suara, project ini menggunakan [whisper.cpp](https://github.com/ggerganov/whisper.cpp), Dan menggunakan FFMPEG untuk mengconvert audio ke wav, Project ini bisa di jalankan di client side dan server side dan tidak memerlukan internet
+Whisper adalah project open source dari [openai](https://github.com/openai) untuk mengeluarkan text dari suara, project ini menggunakan [whisper.cpp](https://github.com/ggerganov/whisper.cpp), Dan menggunakan [FFMPEG](https://github.com/FFmpeg/FFmpeg) untuk mengconvert audio ke wav, Project ini bisa di jalankan di client side dan server side dan tidak memerlukan internet
 
 ### Resources
 
