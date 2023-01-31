@@ -8,6 +8,16 @@ Assets yang di perlukan
 
 1. [Datasets Whisper GGML](https://huggingface.co/datasets/ggerganov/whisper.cpp)
 
+### Memory Usage
+
+|   Model     |   Disk     |   Mem     |
+| -----       | ------     | --------- |
+| tiny	      |75 MB	   |   125 MB  |
+| base	      |142 MB	   |   210 MB  |
+| small	      |466 MB	   |   600 MB  |
+| medium	  |1.5 GB      |   1.7 GB  |
+| large	      |2.9 GB      |   3.3 GB  |
+
 ### TESTED ON
 
 - Ubuntu 20.04<br>
