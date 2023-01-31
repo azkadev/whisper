@@ -14,20 +14,20 @@ Assets yang di perlukan
   CPU: Amd Ryzen 55000u<br>
   Ram: 8gb
 
-- Android 11
-  CPU: Snapdragon 665
+- Android 11<br>
+  CPU: Snapdragon 665<br>
   Ram: 3gb
 
-- Android 5
-  Cpu: Snapdragon 430
+- Android 5<br>
+  Cpu: Snapdragon 430<br>
   Ram: 2gb
 
-- Windows 11 Pro 22H2 (22621.1105) 
-   CPU: AMD Ryzen 3600
+- Windows 11 Pro 22H2 (22621.1105)<br>
+   CPU: AMD Ryzen 3600<br>
    Ram: 16gb
 
-- Android 13
-  CPU: Snapdragon 730
+- Android 13<br>
+  CPU: Snapdragon 730<br>
   Ram: 4gb
 
 - Pixel 3a API 33 Android x64 emulator
