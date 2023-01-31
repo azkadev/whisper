@@ -31,6 +31,6 @@ Assets yang di perlukan
 
 Untuk devices lainya saya tidak tahu bisa / enggak karena saya tidak ada devices
 
-Contributors:
+## Contributors:
 
 1. [JeisonSanches](https://github.com/JeisonSanches) - [Whisper Flutter](https://github.com/azkadev/whisper_dart/tree/main/package/whisper_flutter)
