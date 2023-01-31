@@ -10,8 +10,8 @@ Assets yang di perlukan
 
 ### TESTED ON
 
-- Ubuntu 20.04
-  CPU: Amd Ryzen 55000u
+- Ubuntu 20.04<br>
+  CPU: Amd Ryzen 55000u<br>
   Ram: 8gb
 
 - Android 11
