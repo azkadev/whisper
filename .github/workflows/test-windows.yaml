@@ -1,10 +1,20 @@
-name: Twst Compile Windows
-on: [workflow_dispatch]
+name: Twst Compile
+on: [push]
 
 jobs:
-  build:
-    name: Compile Windows @azkadev
-    runs-on: windows-latest
+  test-desktop:
+    name: Compile Desktop 
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            output-name: linux
+          - os: macOS-latest
+            output-name: macos
+          - os: windows-latest
+            output-name: windows
 
     steps:
       - name: Export Release Timestamp
@@ -31,7 +41,7 @@ jobs:
       - name: Mkdir result
         run: mkdir result
       - name: Set Flutter enable devices
-        continue-on-error: true
+        continue-on-error: false
         run: |
           flutter config --enable-web
           flutter config --enable-linux-desktop
@@ -41,8 +51,8 @@ jobs:
           flutter config --enable-ios
 
       # Compile specta app
-      - name: Compile Application For Desktop
-        continue-on-error: true
+      - name: "Test Compile On ${{ matrix.output-name }}"
+        continue-on-error: false
         run: |
           cd package/whisper_flutter/example
           flutter pub get
@@ -55,4 +65,54 @@ jobs:
           if [ "$RUNNER_OS" == "macOS" ]; then
             flutter build macos --release
           fi
+        shell: bash
+
+
+  test-mobile:
+    name: Compile Mobile 
+    runs-on: macos-latest
+
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "adopt"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.7.0"
+          channel: "stable"
+      - name: check dart version
+        run: dart --version 
+      - name: Set Flutter enable devices
+        continue-on-error: false
+        run: |
+          flutter config --enable-web
+          flutter config --enable-linux-desktop
+          flutter config --enable-macos-desktop
+          flutter config --enable-windows-desktop
+          flutter config --enable-android
+          flutter config --enable-ios
+ 
+      - name: "Test Compile Android"
+        continue-on-error: false
+        run: |
+          cd package/whisper_flutter/example
+          flutter pub get
+          flutter build apk --release
+        shell: bash
+
+      - name: "Test Compile Ios"
+        continue-on-error: false
+        run: |
+          cd package/whisper_flutter/example
+          flutter pub get 
+          flutter build ios --no-codesign
         shell: bash
