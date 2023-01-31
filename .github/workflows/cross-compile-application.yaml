@@ -1,0 +1,65 @@
+name: Build and Release Cross Compile
+on: [push]
+jobs:
+  build-android:
+    name: Build Apps Android
+    runs-on: macos-latest
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.0'
+          channel: 'stable'
+      - name: Open example
+        run: | 
+          cd package/whisper_flutter/example
+          flutter pub get
+          flutter build apk --release --target-platform=android-arm64
+      - name: Publish Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with: 
+          repo_token: "${{ github.token }}"
+          automatic_release_tag: "latest-android"
+          prerelease: false
+          title: "Example App Build"
+          files: |
+            package/whisper_flutter/example/build/app/outputs/apk/release/*.apk 
+ 
+  build-linux:
+    name: Build Apps Linux 20.04
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.7.0'
+          channel: 'stable'
+      - name: Build App
+        run: |
+          cd package/whisper_flutter/example
+          flutter pub get
+          flutter build linux --release
+          cp -rf build/linux/x64/release/bundle linux/packaging/usr/local/share/example
+          dart pub run packagex build -o ./build/app-linux.deb
+      - name: Publish Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with: 
+          repo_token: "${{ github.token }}"
+          automatic_release_tag: "latest-linux"
+          prerelease: false
+          title: "Example app Build"
+          files: |
+            package/whisper_flutter/example/build/app-linux.deb

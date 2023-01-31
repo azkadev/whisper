@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=0.0.0
+Name=example
+GenericName=General Application
+Exec=example %U
+Categories=Music;Media;
+Keywords=Hello;World;Test;Application;
+StartupNotify=true
