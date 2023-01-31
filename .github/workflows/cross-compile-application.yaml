@@ -84,6 +84,7 @@ jobs:
       - name: Compile Application For Android
         continue-on-error: true
         run: | 
+          cd package/whisper_flutter/example
           if [ "$RUNNER_OS" == "macOS" ]; then
             flutter build apk --release --split-per-abi
             mv build/app/outputs/apk/release/*.apk ../../../result/
@@ -92,6 +93,7 @@ jobs:
       - name: Compile Application For iOS
         continue-on-error: true
         run: | 
+          cd package/whisper_flutter/example
           if [ "$RUNNER_OS" == "macOS" ]; then
             flutter build ios --no-codesign
             cd build/ios/iphoneos
@@ -106,6 +108,7 @@ jobs:
       - name: Compile Application For Web
         continue-on-error: true
         run: |
+          cd package/whisper_flutter/example
           if [ "$RUNNER_OS" == "macOS" ]; then
             flutter build web
             cd build/web
