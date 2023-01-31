@@ -27,7 +27,7 @@ Assets yang di perlukan
 | 3 | Android 5 | Snapdragon 430 | 2gb |
 | 4 | Windows 11 Pro 22H2 (22621.1105) | AMD Ryzen 3600| 16GB |
 | 5 | Android 13 | Snapdragon 730 | 4GB |
-| 6 | Pixel 3a API 33 Androi x64 emulator | Unknown | Unknown |
+| 6 | Pixel 3a API 33 AndroiD x64 emulator | Unknown | Unknown |
 
 Untuk devices lainya saya tidak tahu bisa / enggak karena saya tidak ada devices
 
