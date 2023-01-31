@@ -13,7 +13,7 @@ import "package:cool_alert/cool_alert.dart";
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  DynamicLibrary.open("whisper.so");
+  DynamicLibrary.open("libwhisper.so");
   runApp(const MyApp());
 }
 
@@ -72,14 +72,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Isolate.spawn(
       (WhisperIsolateData whisperIsolateData) {
         Whisper whisper = Whisper(
-          whisperLib: "whisper.so",
+          whisperLib: "libwhisper.so",
         );
         ReceivePort receivePort = ReceivePort();
         whisperIsolateData.second_send_port.send(receivePort.sendPort);
         receivePort.listen((message) {
           if (message is WhisperData) {
             var res = whisper.request(
-              whisperLib: "whisper.so",
+              whisperLib: "libwhisper.so",
               whisperRequest: WhisperRequest.fromWavFile(
                 audio: File(message.audio),
                 model: File(message.model),
