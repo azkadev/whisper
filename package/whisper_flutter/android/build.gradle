@@ -1,7 +1,7 @@
 // The Android Gradle Plugin builds the native code with the Android NDK.
 
-group 'com.example.whisper_flutter'
-version '1.0'
+group 'com.azkadev.whisper_flutter'
+version '0.0'
 
 buildscript {
     repositories {
