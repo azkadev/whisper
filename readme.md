@@ -20,27 +20,14 @@ Assets yang di perlukan
 
 ### TESTED ON
 
-- Ubuntu 20.04<br>
-  CPU: Amd Ryzen 55000u<br>
-  Ram: 8gb
-
-- Android 11<br>
-  CPU: Snapdragon 665<br>
-  Ram: 3gb
-
-- Android 5<br>
-  Cpu: Snapdragon 430<br>
-  Ram: 2gb
-
-- Windows 11 Pro 22H2 (22621.1105)<br>
-   CPU: AMD Ryzen 3600<br>
-   Ram: 16gb
-
-- Android 13<br>
-  CPU: Snapdragon 730<br>
-  Ram: 4gb
-
-- Pixel 3a API 33 Android x64 emulator
+|NO | OS | CPU | RAM |
+|--| --- |--- | --- |
+| 1 | Ubuntu 20.04 | AMD RYZEN 5500U | 8gb |
+| 2 | Android 11 | Snapdragon 665| 3gb |
+| 3 | Android 5 | Snapdragon 430 | 2gb |
+| 4 | Windows 11 Pro 22H2 (22621.1105) | AMD Ryzen 3600| 16GB |
+| 5 | Android 13 | Snapdragon 730 | 4GB |
+| 6 | Pixel 3a API 33 Androi x64 emulator | Unknown | Unknown |
 
 Untuk devices lainya saya tidak tahu bisa / enggak karena saya tidak ada devices
 
