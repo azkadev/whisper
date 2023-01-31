@@ -16,7 +16,7 @@ add_library(whisper_flutter SHARED main.cpp)
 
 set_target_properties(whisper_flutter PROPERTIES
   PUBLIC_HEADER whisper.cpp/whisper.h 
-  OUTPUT_NAME "libwhisper"
+  OUTPUT_NAME "whisper"
 )
 
 if (WIN32)
