@@ -5,7 +5,7 @@ display_name: Example
 # package name for debian/apt repository
 # the name should be all lowercase with -+.
 package_name: example-whisper
-icon: assets/icon/terminal.png
+# icon: assets/icon/terminal.png
 maintainer:
   name: azkadev
   email: azkadev@noemail.com
