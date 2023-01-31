@@ -3,7 +3,7 @@
 # Run `pod lib lint whisper_dart.podspec` to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'whisper_dart'
+  s.name             = 'whisper_flutter'
   s.version          = '0.0.1'
   s.summary          = 'A new Flutter FFI plugin project.'
   s.description      = <<-DESC
