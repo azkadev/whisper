@@ -25,7 +25,7 @@ Assets yang di perlukan
 | 1 | Ubuntu 20.04 | AMD RYZEN 5500U | 8GB |
 | 2 | Android 11 | Snapdragon 665| 3GB |
 | 3 | Android 5 | Snapdragon 430 | 2GB |
-| 4 | Windows 11 Pro 22H2 (22621.1105) | AMD Ryzen 3600| 16GB |
+| 4 | Windows 11 Pro 22H2 (22621.1105) | AMD RYZEN 3600| 16GB |
 | 5 | Android 13 | Snapdragon 730 | 4GB |
 | 6 | Pixel 3a API 33 AndroiD x64 emulator | Unknown | Unknown |
 
