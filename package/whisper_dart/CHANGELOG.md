@@ -1,5 +1,9 @@
+## 0.0.8
+- update style code
+
 ## 0.0.5
 - update galaexeus_lib
+  
 ## 0.0.4
 - update whisper.cpp
 ## 0.0.2

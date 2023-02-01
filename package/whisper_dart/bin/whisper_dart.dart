@@ -3,10 +3,8 @@
 import 'package:galaxeus_lib/galaxeus_lib.dart';
 import 'package:universal_io/io.dart';
 import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
 
 void main(List<String> arguments) async {
-  
   DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
@@ -15,16 +13,19 @@ void main(List<String> arguments) async {
   try {
     var res = whisper.request(
       whisperRequest: WhisperRequest.fromWavFile(
-        // audio: WhisperAudioconvert.convert(
-        //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-        //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        // ),
-        audio: File(
-            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        audio: WhisperAudioconvert.convert(
+          audioInput: File(
+              "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
+          audioOutput: File(
+              "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
+        ),
+        // audio: File(
+        // "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
         model: File(
             "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-base.bin"),
       ),
     );
+    res;
     print(res.toString());
     print(convertToAgo(time.millisecondsSinceEpoch));
   } catch (e) {
