@@ -5,6 +5,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(whisper_flutter_library VERSION 0.0.1 LANGUAGES C CXX)
 
+message("Started Compile Whisper")
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a") 
@@ -19,12 +21,6 @@ set_target_properties(whisper_flutter PROPERTIES
   OUTPUT_NAME "whisper"
 )
 
-if (WIN32)
-  set_target_properties(whisper_flutter PROPERTIES
-    WINDOWS_EXPORT_ALL_SYMBOLS ON
-  )
-endif (WIN32)
-
-target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
-target_link_libraries(whisper_flutter PRIVATE whisper ggml ${CMAKE_THREAD_LIBS_INIT})
+# target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
+# target_link_libraries(whisper_flutter PRIVATE whisper ggml ${CMAKE_THREAD_LIBS_INIT})
  
