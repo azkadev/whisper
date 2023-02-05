@@ -36,7 +36,7 @@ android {
     // Invoke the shared CMake build with the Android Gradle Plugin.
     externalNativeBuild {
         cmake {
-            path "../src/CMakeLists.txt"
+            path "../src/CMakeListsAndroid.txt"
 
             // The default CMake version for the Android Gradle Plugin is 3.10.2.
             // https://developer.android.com/studio/projects/install-ndk#vanilla_cmake
