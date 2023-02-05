@@ -9,7 +9,7 @@ message("Started Compile Whisper")
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++2a -fPIC") 
 
 add_library(ggml whisper.cpp/ggml.c)
 add_library(whisper whisper.cpp/whisper.cpp)
@@ -21,6 +21,6 @@ set_target_properties(whisper_flutter PROPERTIES
   OUTPUT_NAME "whisper"
 )
 
-# target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
-# target_link_libraries(whisper_flutter PRIVATE whisper ggml ${CMAKE_THREAD_LIBS_INIT})
+target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
+target_link_libraries(whisper_flutter PRIVATE whisper ggml ${CMAKE_THREAD_LIBS_INIT})
  
