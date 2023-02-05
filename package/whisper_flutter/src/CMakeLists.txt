@@ -26,5 +26,9 @@ if (WIN32)
 endif (WIN32)
 
 target_compile_definitions(whisper_flutter PUBLIC DART_SHARED_LIB)
-target_link_libraries(whisper_flutter PRIVATE ggml ${CMAKE_THREAD_LIBS_INIT})
- 
+
+if (UNIX)
+  target_link_libraries(whisper_flutter PRIVATE ggml ${CMAKE_THREAD_LIBS_INIT})
+else
+  target_link_libraries(whisper_flutter PRIVATE whisper ggml ${CMAKE_THREAD_LIBS_INIT})
+endif()
