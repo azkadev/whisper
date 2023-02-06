@@ -50,78 +50,17 @@ jobs:
         shell: bash
       - name: Mkdir result
         run: mkdir result
-      - name: Set Flutter enable devices
-        continue-on-error: true
+      - name: Compile 
+        shell: bash
         run: |
-          flutter config --enable-web
-          flutter config --enable-linux-desktop
-          flutter config --enable-macos-desktop
-          flutter config --enable-windows-desktop
-          flutter config --enable-android
-          flutter config --enable-ios
-      - name: Activate Flutter Distribute
-        continue-on-error: true
-        run: dart pub global activate flutter_distributor
-
-      # Compile specta app
-      - name: Compile Application For Desktop
-        continue-on-error: true
-        run: |
-          cd package/whisper_flutter/example
-          flutter pub get
+          cd native_lib
           if [ "$RUNNER_OS" == "Linux" ]; then
-            flutter_distributor package --platform linux --targets deb
-            mv dist/*/*.deb ../../../result/
+            mkdir build
+            cd build
+            cmake -DCMAKE_BUILD_TYPE=Release ..
+            cmake --build .
+            mv ./libwhisper.so ../../result/
           fi
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            flutter build windows --release
-          fi
-          if [ "$RUNNER_OS" == "macOS" ]; then 
-            flutter_distributor package --platform macos --targets dmg
-            mv dist/*/*.dmg ../../../result/
-          fi
-        shell: bash
-      - name: Compile Application For Android
-        continue-on-error: true
-        run: | 
-          cd package/whisper_flutter/example
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            flutter build apk --release --split-per-abi
-            mv build/app/outputs/apk/release/*.apk ../../../result/
-          fi
-        shell: bash
-      - name: Compile Application For iOS
-        continue-on-error: true
-        run: | 
-          cd package/whisper_flutter/example
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            flutter build ios --no-codesign
-            cd build/ios/iphoneos
-            mkdir Payload
-            cd Payload
-            ln -s ../Runner.app
-            cd ..
-            zip -r app_ios.ipa Payload
-            mv app_ios.ipa ../../.../../../result/
-          fi
-        shell: bash
-      - name: Compile Application For Web
-        continue-on-error: true
-        run: |
-          cd package/whisper_flutter/example
-          if [ "$RUNNER_OS" == "macOS" ]; then
-            flutter build web
-            cd build/web
-            zip -r web-app.zip .
-            mv web-app.zip ../.../../../result/
-          fi
-        shell: bash
-      - name: Publish artifact
-        uses: actions/upload-artifact@v3
-        continue-on-error: true
-        with:
-          name: Artifact
-          path: result/*
       - name: Publish Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
