@@ -1,0 +1,133 @@
+name: Compile Cross platform
+on: [push]
+
+jobs:
+  build:
+    name: Compile Program dart cross platform @azkadev
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        include:
+          - os: ubuntu-latest
+            output-name: linux
+          - os: macOS-latest
+            output-name: macos
+          - os: windows-latest
+            output-name: windows
+
+    steps:
+      - name: Export Release Timestamp
+        run: echo "APP_VERSION=v$(date +'%Y.%m.%d.%H.%M.%S')" >> $GITHUB_ENV
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: "11"
+          distribution: "adopt"
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.7.0"
+          channel: "stable"
+      - name: check dart version
+        run: dart --version
+      - name: Install Dependencies
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt update -y
+            sudo apt-get install -y make git zlib1g-dev libssl-dev gperf cmake clang libc++-dev libc++abi-dev php-cli cmake g++
+            sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+          fi
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            brew update
+            brew install node
+            npm install -g appdmg
+          fi
+        shell: bash
+      - name: Mkdir result
+        run: mkdir result
+      - name: Set Flutter enable devices
+        continue-on-error: true
+        run: |
+          flutter config --enable-web
+          flutter config --enable-linux-desktop
+          flutter config --enable-macos-desktop
+          flutter config --enable-windows-desktop
+          flutter config --enable-android
+          flutter config --enable-ios
+      - name: Activate Flutter Distribute
+        continue-on-error: true
+        run: dart pub global activate flutter_distributor
+
+      # Compile specta app
+      - name: Compile Application For Desktop
+        continue-on-error: true
+        run: |
+          cd package/whisper_flutter/example
+          flutter pub get
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            flutter_distributor package --platform linux --targets deb
+            mv dist/*/*.deb ../../../result/
+          fi
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            flutter build windows --release
+          fi
+          if [ "$RUNNER_OS" == "macOS" ]; then 
+            flutter_distributor package --platform macos --targets dmg
+            mv dist/*/*.dmg ../../../result/
+          fi
+        shell: bash
+      - name: Compile Application For Android
+        continue-on-error: true
+        run: | 
+          cd package/whisper_flutter/example
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            flutter build apk --release --split-per-abi
+            mv build/app/outputs/apk/release/*.apk ../../../result/
+          fi
+        shell: bash
+      - name: Compile Application For iOS
+        continue-on-error: true
+        run: | 
+          cd package/whisper_flutter/example
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            flutter build ios --no-codesign
+            cd build/ios/iphoneos
+            mkdir Payload
+            cd Payload
+            ln -s ../Runner.app
+            cd ..
+            zip -r app_ios.ipa Payload
+            mv app_ios.ipa ../../.../../../result/
+          fi
+        shell: bash
+      - name: Compile Application For Web
+        continue-on-error: true
+        run: |
+          cd package/whisper_flutter/example
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            flutter build web
+            cd build/web
+            zip -r web-app.zip .
+            mv web-app.zip ../.../../../result/
+          fi
+        shell: bash
+      - name: Publish artifact
+        uses: actions/upload-artifact@v3
+        continue-on-error: true
+        with:
+          name: Artifact
+          path: result/*
+      - name: Publish Release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ github.token }}"
+          automatic_release_tag: "latest-${{ matrix.output-name }}"
+          prerelease: false
+          title: "Release ${{ matrix.output-name }}"
+          files: |
+            result/*
