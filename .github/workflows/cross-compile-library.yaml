@@ -1,9 +1,9 @@
-name: Compile Cross platform
-on: [push]
+name: Compile Cross Library
+on: [workflow_dispatch]
 
 jobs:
   build:
-    name: Compile Program dart cross platform @azkadev
+    name: Compile Program dart cross platform Library @azkadev
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -36,7 +36,6 @@ jobs:
       - name: check dart version
         run: dart --version
       - name: Install Dependencies
-        continue-on-error: true
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
             sudo apt update -y
