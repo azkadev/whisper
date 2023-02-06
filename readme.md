@@ -23,7 +23,7 @@ Assets yang di perlukan.
 Features yang akan datang
 
 1. [x] Cross Platform (Android / linux / windows / ios / macos)
-2. [ ] Add FFMPEG KIT Cross Platform
+2. [ ] Add FFMPEG KIT Cross Platform (Android / linux / windows / ios / macos)
 3. [ ] Docs
 
 ### TESTED ON
