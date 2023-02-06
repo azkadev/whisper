@@ -14,7 +14,7 @@ add_library(ggml whisper.cpp/ggml.c)
 
 set_target_properties(whisper_dart PROPERTIES
   PUBLIC_HEADER whisper.cpp/whisper.h 
-  OUTPUT_NAME "whisper_dart"
+  OUTPUT_NAME "whisper"
 )
 
 if (WIN32)
