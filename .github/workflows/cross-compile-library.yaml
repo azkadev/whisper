@@ -61,11 +61,18 @@ jobs:
             cmake --build .
             mv ./libwhisper.so ../../result/
           fi
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            mkdir build
+            cd build
+            cmake -DCMAKE_BUILD_TYPE=Release ..
+            cmake --build .
+            mv ./libwhisper.so ../../result/
+          fi
       - name: Publish Release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: "${{ github.token }}"
-          automatic_release_tag: "latest-library${{ matrix.output-name }}"
+          automatic_release_tag: "latest-library-${{ matrix.output-name }}"
           prerelease: false
           title: "Release ${{ matrix.output-name }}"
           files: |
