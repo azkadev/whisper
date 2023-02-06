@@ -5,7 +5,7 @@
 cmake_minimum_required(VERSION 3.14)
 
 # Project-level configuration.
-set(PROJECT_NAME "whisper_dart")
+set(PROJECT_NAME "whisper_flutter")
 project(${PROJECT_NAME} LANGUAGES C CXX)
 
 
@@ -16,9 +16,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/../src" "${CMAKE_CURRENT_BINARY_DI
 # List of absolute paths to libraries that should be bundled with the plugin.
 # This list could contain prebuilt libraries, or libraries created by an
 # external build triggered from this build file.
-set(whisper_dart_bundled_libraries
+set(whisper_flutter_bundled_libraries
   # Defined in ../src/CMakeLists.txt.
   # This can be changed to accomodate different builds.
-  $<TARGET_FILE:whisper_dart>
+  $<TARGET_FILE:whisper_flutter>
   PARENT_SCOPE
 )
