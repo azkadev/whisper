@@ -7,8 +7,6 @@ Whisper adalah project open source dari [openai](https://github.com/openai) untu
 1. Flutter App
 https://user-images.githubusercontent.com/82513502/220721473-3303ab00-e272-4b58-bfe5-86fb9db05814.mp4
 
-
-
 ## Resources
 
 Assets yang di perlukan.
@@ -49,3 +47,53 @@ Untuk devices lainya saya tidak tahu bisa / enggak karena saya tidak ada devices
 ## Contributors
 
 1. [JeisonSanches](https://github.com/JeisonSanches) - [Whisper Flutter](https://github.com/azkadev/whisper_dart/tree/main/package/whisper_flutter)
+
+
+## Quickstart
+
+
+1. Dart
+Jika anda ingin menggunakan whisper di cli / backend server anda menggunakan ini
+
+- Install package dulu
+```bash
+dart pub add whisper_dart
+```
+
+- Tambahkan library
+
+```dart
+import "package:whisper_dart/whisper_dart.dart";
+```
+
+
+2. Flutter app
+
+Jika anda ingin menggunakan whisper di app anda menggunakan ini
+
+- Install package dulu
+```bash
+flutter pub add wisper_flutter
+```
+
+- Tambahkan library
+
+```dart
+import "package:whisper_flutter/whisper_flutter.dart";
+```
+
+
+### Code
+
+
+```bash
+Whisper whisper = Whisper();
+var res = await whisper.request(
+    whisperLib: "libwhisper.so", # jika anda menggunakan whisper flutter anda tidak perlu menambahkan whisperLib karena sudah automatis
+    # pastikan audio yang kamu gunakan berformat wav ya
+    whisperRequest: WhisperRequest.fromWavFile(
+        audio: File(audio),
+        model: File(model),
+    ),
+);
+```
