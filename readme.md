@@ -2,6 +2,13 @@
 
 Whisper adalah project open source dari [openai](https://github.com/openai) untuk mengeluarkan text dari suara, project ini menggunakan [whisper.cpp](https://github.com/ggerganov/whisper.cpp), Dan menggunakan [FFMPEG](https://github.com/FFmpeg/FFmpeg) untuk mengconvert audio ke wav, Project ini bisa di jalankan di client side dan server side dan tidak memerlukan internet.
 
+## Demo
+
+1. Flutter App
+https://user-images.githubusercontent.com/82513502/220721473-3303ab00-e272-4b58-bfe5-86fb9db05814.mp4
+
+
+
 ## Resources
 
 Assets yang di perlukan.
