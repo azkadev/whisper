@@ -11,7 +11,8 @@ https://user-images.githubusercontent.com/82513502/220721473-3303ab00-e272-4b58-
 
 ### Information
 
-ENGLISH: 
+ENGLISH: I'm currently a little busy and maybe this library is not being updated, if you want to contribute please make a pull request, thank you <br>
+INDONESIA: Saat ini saya sedikit sibuk dan mungkin library ini tidak di update, jika anda ingin berkontribusi silahkan  buat pull request ya terimakasi
 
 ## Resources
 
