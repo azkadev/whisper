@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:ffi';
+import 'dart:isolate';
 import 'package:universal_io/io.dart';
 import 'package:ffi/ffi.dart';
 import "scheme/scheme.dart";
@@ -34,19 +35,19 @@ class Whisper {
     }
   }
 
-  Transcribe request({
+  Future<Transcribe> request({
     required WhisperRequest whisperRequest,
     String? whisperLib,
-  }) {
+  }) async {
     whisperLib ??= whisper_lib;
     try {
-      var res = openLib(
-        whisperLib: whisperLib,
-      )
-          .lookupFunction<whisper_request_native, whisper_request_native>(
-              "request")
-          .call(whisperRequest.toString().toNativeUtf8());
-      Map result = json.decode(res.toDartString());
+      Map result = await Isolate.run(() async {
+        Pointer<Utf8> data =  whisperRequest.toString().toNativeUtf8();
+        var res = openLib(whisperLib: whisperLib).lookupFunction<whisper_request_native, whisper_request_native>("request").call(data);
+        Map result = json.decode(res.toDartString());
+        malloc.free(data);
+        return result;
+      });
       return Transcribe(result);
     } catch (e) {
       print(e);
