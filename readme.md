@@ -87,7 +87,7 @@ import "package:whisper_flutter/whisper_flutter.dart";
 ### Code
 
 
-```bash
+```dart
 Whisper whisper = Whisper();
 var res = await whisper.request(
     whisperLib: "libwhisper.so", # jika anda menggunakan whisper flutter anda tidak perlu menambahkan whisperLib karena sudah automatis
