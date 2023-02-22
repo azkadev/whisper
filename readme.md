@@ -8,6 +8,11 @@ Whisper adalah project open source dari [openai](https://github.com/openai) untu
 
 https://user-images.githubusercontent.com/82513502/220721473-3303ab00-e272-4b58-bfe5-86fb9db05814.mp4
 
+
+### Information
+
+ENGLISH: 
+
 ## Resources
 
 Assets yang di perlukan.
