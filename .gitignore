@@ -40,3 +40,4 @@ whisper_api/
 whisper_api_railway/
 =======
 >>>>>>> e00b55753994ebd5a0ec17fcc2e129383927717a
+samples/*.bin
