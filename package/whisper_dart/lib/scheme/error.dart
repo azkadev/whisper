@@ -2,11 +2,11 @@
 import "json_dart.dart";
 // import "dart:convert";
 
-class Transcribe extends JsonDart {
-  Transcribe(super.rawData);
+class Error extends JsonDart {
+  Error(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "Transcribe", "text": ""};
+    return {"@type": "Error", "message": ""};
   }
 
   String? get special_type {
@@ -20,26 +20,26 @@ class Transcribe extends JsonDart {
     }
   }
 
-  String? get text {
+  String? get message {
     try {
-      if (rawData["text"] is String == false) {
+      if (rawData["message"] is String == false) {
         return null;
       }
-      return rawData["text"] as String;
+      return rawData["message"] as String;
     } catch (e) {
       return null;
     }
   }
 
-  static Transcribe create({
+  static Error create({
     String? special_type,
-    String? text,
+    String? message,
   }) {
-    Transcribe transcribe = Transcribe({
+    Error error = Error({
       "@type": special_type,
-      "text": text,
+      "message": message,
     });
 
-    return transcribe;
+    return error;
   }
 }

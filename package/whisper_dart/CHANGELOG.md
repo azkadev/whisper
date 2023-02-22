@@ -1,3 +1,6 @@
+## 0.0.10
+- update style code && improve speed
+
 ## 0.0.8
 - update style code
 

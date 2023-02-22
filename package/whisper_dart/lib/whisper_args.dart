@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:ffi/ffi.dart';
 
 class WhisperArgs {
-  late List<String> args;
+  List<String> args;
   WhisperArgs(this.args);
   Pointer<Pointer<Utf8>> toNativeList() {
     List<Pointer<Utf8>> utf8PointerList =
