@@ -156,10 +156,10 @@ packages:
     dependency: transitive
     description:
       name: galaxeus_lib
-      sha256: dc07eadcba1c93c2dd0fe039b9eae2c4e4bfe6425b2fb3d154709dfd0231ff88
+      sha256: "3f691dd4746481215651c8ff611db324fba50973dd6121944a4a5d137d554281"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.46"
+    version: "0.0.53"
   http:
     dependency: transitive
     description:
@@ -228,10 +228,10 @@ packages:
     dependency: "direct dev"
     description:
       name: packagex
-      sha256: "6e3f1fa5d9b9bd574671bd53545cb25125849ba788aa55e98e8c7eeb39ac86db"
+      sha256: "62845a5f5953ac7ea53c960b6ca28b6dad7763a3e7a36319ca093c58272b9330"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.7"
+    version: "0.0.12"
   path:
     dependency: transitive
     description:
@@ -321,10 +321,10 @@ packages:
     dependency: transitive
     description:
       name: universal_io
-      sha256: "79f78ddad839ee3aae3ec7c01eb4575faf0d5c860f8e5223bc9f9c17f7f03cef"
+      sha256: "06866290206d196064fd61df4c7aea1ffe9a4e7c4ccaa8fcded42dd41948005d"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.4"
+    version: "2.2.0"
   vector_math:
     dependency: transitive
     description:
@@ -337,17 +337,17 @@ packages:
     dependency: transitive
     description:
       name: whisper_dart
-      sha256: "8c17a01e3082108cccc74ae5f81bb69347a8a358f4844a05d88776b9b33ec450"
+      sha256: cfc7577a4b5e6768e1748b7d359276c75886131c99ef377ad86398bd4076ab3b
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.7"
+    version: "0.0.9"
   whisper_flutter:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.1"
+    version: "0.0.2"
   win32:
     dependency: transitive
     description:
@@ -357,5 +357,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=2.19.0 <4.0.0"
+  dart: ">=2.19.0 <3.0.0"
   flutter: ">=3.3.0"
