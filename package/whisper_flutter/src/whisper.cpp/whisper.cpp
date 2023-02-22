@@ -592,16 +592,16 @@ struct whisper_context {
 
     mutable std::mt19937 rng; // used for sampling at t > 0.0
 
-    int lang_id;
+    int lang_id = 0; // english by default
 
     // [EXPERIMENTAL] token-level timestamps data
-    int64_t t_beg;
-    int64_t t_last;
+    int64_t t_beg = 0;
+    int64_t t_last = 0;
     whisper_token tid_last;
     std::vector<float> energy; // PCM signal energy
 
     // [EXPERIMENTAL] speed-up techniques
-    int32_t exp_n_audio_ctx; // 0 - use default
+    int32_t exp_n_audio_ctx = 0; // 0 - use default
 
     void use_buf(struct ggml_context * ctx, int i) {
 #if defined(WHISPER_USE_SCRATCH)
@@ -805,7 +805,7 @@ static bool whisper_model_load(struct whisper_model_loader * loader, whisper_con
                      MEM_REQ_SCRATCH3.at (model.type) +
                 scale*MEM_REQ_MODEL.at   (model.type) +
                 scale*MEM_REQ_KV_CROSS.at(model.type) +
-                scale*std::max(MEM_REQ_ENCODE.at(model.type),       MEM_REQ_DECODE.at(model.type));
+                scale*std::max(MEM_REQ_ENCODE.at(model.type), MEM_REQ_DECODE.at(model.type));
 
             // this is the memory required by one decoder
             const size_t mem_required_decoder =
@@ -2905,7 +2905,7 @@ const char * whisper_print_system_info(void) {
 
 struct whisper_full_params whisper_full_default_params(enum whisper_sampling_strategy strategy) {
     struct whisper_full_params result = {
-        /*.strategy         =*/ WHISPER_SAMPLING_GREEDY,
+        /*.strategy         =*/ strategy,
 
         /*.n_threads        =*/ std::min(4, (int32_t) std::thread::hardware_concurrency()),
         /*.n_max_text_ctx   =*/ 16384,
@@ -2936,6 +2936,7 @@ struct whisper_full_params whisper_full_default_params(enum whisper_sampling_str
         /*.language         =*/ "en",
 
         /*.suppress_blank   =*/ true,
+        /*.suppress_non_speech_tokens =*/ false,
 
         /*.temperature      =*/  0.0f,
         /*.max_initial_ts   =*/  1.0f,
@@ -2961,6 +2962,9 @@ struct whisper_full_params whisper_full_default_params(enum whisper_sampling_str
 
         /*.encoder_begin_callback           =*/ nullptr,
         /*.encoder_begin_callback_user_data =*/ nullptr,
+
+        /*.logits_filter_callback           =*/ nullptr,
+        /*.logits_filter_callback_user_data =*/ nullptr,
     };
 
     switch (strategy) {
@@ -3014,8 +3018,7 @@ static inline void trim(std::string &s) {
 static inline bool should_split_on_word(const char * txt, bool split_on_word) {
     if (!split_on_word) return true;
 
-    std::string s = txt;
-    return s.substr(0, 1) == " ";
+    return txt[0] == ' ';
 }
 
 // wrap the last segment to max_len characters
@@ -3039,7 +3042,10 @@ static int whisper_wrap_segment(struct whisper_context & ctx, int max_len, bool 
 
         if (acc + cur > max_len && i > 0 && should_split_on_word(txt, split_on_word)) {
             // split here
-            trim(text);
+            if (split_on_word) {
+                trim(text);
+            }
+
             ctx.result_all.back().text = std::move(text);
             ctx.result_all.back().t1 = token.t0;
             ctx.result_all.back().tokens.resize(i);
@@ -3067,17 +3073,26 @@ static int whisper_wrap_segment(struct whisper_context & ctx, int max_len, bool 
         }
     }
 
-    trim(text);
+    if (split_on_word) {
+        trim(text);
+    }
     ctx.result_all.back().text = std::move(text);
 
     return res;
 }
 
+static const std::vector<std::string> non_speech_tokens = {
+    "\"", "#", "(", ")", "*", "+", "/", ":", ";", "<", "=", ">", "@", "[", "\\", "]", "^",
+    "_", "`", "{", "|", "}", "~", "「", "」", "『", "』", "<<", ">>", "<<<", ">>>", "--",
+    "---", "-(", "-[", "('", "(\"", "((", "))", "(((", ")))", "[[", "]]", "{{", "}}", "♪♪",
+    "♪♪♪","♩", "♪", "♫", "♬", "♭", "♮", "♯"
+};
+
 // process the logits for the selected decoder
 // - applies logit filters
 // - computes logprobs and probs
 static void whisper_process_logits(
-        const struct whisper_context & ctx,
+              struct whisper_context & ctx,
     const struct whisper_full_params   params,
               struct whisper_decoder & decoder,
                                float   temperature) {
@@ -3132,6 +3147,31 @@ static void whisper_process_logits(
         // suppress task tokens
         logits[vocab.token_translate]  = -INFINITY;
         logits[vocab.token_transcribe] = -INFINITY;
+
+        if (params.logits_filter_callback) {
+            params.logits_filter_callback(&ctx, tokens_cur.data(), tokens_cur.size(), logits.data(), params.logits_filter_callback_user_data);
+        }
+
+        // suppress non-speech tokens
+        // ref: https://github.com/openai/whisper/blob/7858aa9c08d98f75575035ecd6481f462d66ca27/whisper/tokenizer.py#L224-L253
+        if (params.suppress_non_speech_tokens) {
+            for (const std::string & token : non_speech_tokens) {
+                const std::string suppress_tokens[] = {token, " " + token};
+                for (const std::string & suppress_token : suppress_tokens) {
+                    if (vocab.token_to_id.find(suppress_token) != vocab.token_to_id.end()) {
+                        logits[vocab.token_to_id.at(suppress_token)] = -INFINITY;
+                    }
+                }
+            }
+
+            // allow hyphens "-" and single quotes "'" between words, but not at the beginning of a word
+            if (vocab.token_to_id.find(" -") != vocab.token_to_id.end()) {
+                logits[vocab.token_to_id.at(" -")] = -INFINITY;
+            }
+            if (vocab.token_to_id.find(" '") != vocab.token_to_id.end()) {
+                logits[vocab.token_to_id.at(" '")] = -INFINITY;
+            }
+        }
 
         // timestamps have to appear in pairs, except directly before EOT; mask logits accordingly
         // https://github.com/openai/whisper/blob/0b1ba3d46ebf7fe6f953acfd8cad62a4f851b49f/whisper/decoding.py#L414-L424
@@ -3814,7 +3854,7 @@ int whisper_full(
                         return a.sequence.sum_logprobs_all > b.sequence.sum_logprobs_all;
                     });
 
-                    int cur_c = 0;
+                    uint32_t cur_c = 0;
 
                     for (int j = 0; j < n_decoders_cur; ++j) {
                         auto & decoder = ctx->decoders[j];
@@ -3825,7 +3865,7 @@ int whisper_full(
 
                         auto & cur = beam_candidates[cur_c++];
 
-                        while (beam_candidates[cur_c].sequence.sum_logprobs_all == cur.sequence.sum_logprobs_all && i > 0) {
+                        while (beam_candidates.size() > cur_c && beam_candidates[cur_c].sequence.sum_logprobs_all == cur.sequence.sum_logprobs_all && i > 0) {
                             ++cur_c;
                         }
 
@@ -4299,7 +4339,7 @@ int whisper_full_n_segments(struct whisper_context * ctx) {
 }
 
 int whisper_full_lang_id(struct whisper_context * ctx) {
-    return ctx->lang_id; 
+    return ctx->lang_id;
 }
 
 int64_t whisper_full_get_segment_t0(struct whisper_context * ctx, int i_segment) {
