@@ -6,17 +6,7 @@ class GetTextFromWavFile extends JsonDart {
   GetTextFromWavFile(super.rawData);
 
   static Map get defaultData {
-    return {
-      "@type": "getTextFromWavFile",
-      "is_translate": false,
-      "threads": 12,
-      "is_verbose": false,
-      "language": "id",
-      "is_special_tokens": false,
-      "is_no_timestamps": false,
-      "audio": "./audio.wav",
-      "model": "./model.bin"
-    };
+    return {"@type": "getTextFromWavFile", "is_translate": false, "threads": 12, "is_verbose": false, "language": "id", "is_special_tokens": false, "is_no_timestamps": false, "audio": "./audio.wav", "model": "./model.bin"};
   }
 
   String? get special_type {
@@ -139,6 +129,15 @@ class GetTextFromWavFile extends JsonDart {
       "is_no_timestamps": is_no_timestamps,
       "audio": audio,
       "model": model,
+      "processors": 1,
+    });
+
+    getTextFromWavFile.rawData.forEach((key, value) {
+      print("""
+
+jsonBody[\"${key}\"] = ${value};
+
+""");
     });
 
     return getTextFromWavFile;

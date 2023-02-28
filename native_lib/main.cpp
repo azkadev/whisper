@@ -119,6 +119,7 @@ struct whisper_params
     bool speed_up = false;
     bool translate = false;
     bool diarize = false;
+    bool split_on_word = false;
     bool no_fallback = false;
     bool output_txt = false;
     bool output_vtt = false;
@@ -134,8 +135,6 @@ struct whisper_params
     std::string prompt;
     std::string model = "models/ggml-model-whisper-small.bin";
     std::string audio = "samples/jfk.wav";
-    std::vector<std::string> fname_inp = {};
-    std::vector<std::string> fname_outp = {};
 };
 
 struct whisper_print_user_data
@@ -174,6 +173,30 @@ json transcribe(json jsonBody)
 
     // whisper init
     struct whisper_context *ctx = whisper_init_from_file(params.model.c_str());
+
+    if (ctx == nullptr)
+    {
+        jsonResult["@type"] = "error";
+        jsonResult["message"] = "failed to initialize whisper context";
+        return jsonResult;
+    }
+
+    std::vector<whisper_token> prompt_tokens;
+
+    if (!params.prompt.empty())
+    {
+        prompt_tokens.resize(1024);
+        prompt_tokens.resize(whisper_tokenize(ctx, params.prompt.c_str(), prompt_tokens.data(), prompt_tokens.size()));
+
+        fprintf(stderr, "\n");
+        fprintf(stderr, "initial prompt: '%s'\n", params.prompt.c_str());
+        fprintf(stderr, "initial tokens: [ ");
+        for (int i = 0; i < (int)prompt_tokens.size(); ++i)
+        {
+            fprintf(stderr, "%d ", prompt_tokens[i]);
+        }
+        fprintf(stderr, "]\n");
+    }
 
     // struct whisper_context *ctx = whisper_init(params.model.c_str());
     std::string text_result = "";
@@ -259,14 +282,37 @@ json transcribe(json jsonBody)
     // run the inference
     {
         whisper_full_params wparams = whisper_full_default_params(WHISPER_SAMPLING_GREEDY);
+        wparams.strategy = params.beam_size > 1 ? WHISPER_SAMPLING_BEAM_SEARCH : WHISPER_SAMPLING_GREEDY;
 
         wparams.print_realtime = false;
-        wparams.print_progress = false;
+        wparams.print_progress = params.print_progress;
         wparams.print_timestamps = !params.no_timestamps;
+        wparams.print_special = params.print_special;
         // wparams.print_special_tokens = params.print_special_tokens;
         wparams.translate = params.translate;
         wparams.language = params.language.c_str();
         wparams.n_threads = params.n_threads;
+
+        wparams.n_max_text_ctx = params.max_context >= 0 ? params.max_context : wparams.n_max_text_ctx;
+        wparams.offset_ms = params.offset_t_ms;
+        wparams.duration_ms = params.duration_ms;
+
+        wparams.token_timestamps = params.output_wts || params.max_len > 0;
+        wparams.thold_pt = params.word_thold;
+        wparams.max_len = params.output_wts && params.max_len == 0 ? 60 : params.max_len;
+        wparams.split_on_word = params.split_on_word;
+
+        wparams.speed_up = params.speed_up;
+
+        wparams.prompt_tokens = prompt_tokens.empty() ? nullptr : prompt_tokens.data();
+        wparams.prompt_n_tokens = prompt_tokens.empty() ? 0 : prompt_tokens.size();
+
+        wparams.greedy.best_of = params.best_of;
+        wparams.beam_search.beam_size = params.beam_size;
+
+        wparams.temperature_inc = params.no_fallback ? 0.0f : wparams.temperature_inc;
+        wparams.entropy_thold = params.entropy_thold;
+        wparams.logprob_thold = params.logprob_thold;
 
         if (whisper_full(ctx, wparams, pcmf32.data(), pcmf32.size()) != 0)
         {
@@ -275,36 +321,31 @@ json transcribe(json jsonBody)
             return jsonResult;
         }
 
-        // print result;
-        if (!wparams.print_realtime)
+        const int n_segments = whisper_full_n_segments(ctx);
+        for (int i = 0; i < n_segments; ++i)
         {
+            const char *text = whisper_full_get_segment_text(ctx, i);
 
-            const int n_segments = whisper_full_n_segments(ctx);
-            for (int i = 0; i < n_segments; ++i)
+            std::string str(text);
+            text_result += str;
+            if (params.no_timestamps)
             {
-                const char *text = whisper_full_get_segment_text(ctx, i);
+                // printf("%s", text);
+                // fflush(stdout);
+            }
+            else
+            {
+                // const int64_t t0 = whisper_full_get_segment_t0(ctx, i);
+                // const int64_t t1 = whisper_full_get_segment_t1(ctx, i);
 
-                std::string str(text);
-                text_result += str;
-                if (params.no_timestamps)
-                {
-                    // printf("%s", text);
-                    // fflush(stdout);
-                }
-                else
-                {
-                    // const int64_t t0 = whisper_full_get_segment_t0(ctx, i);
-                    // const int64_t t1 = whisper_full_get_segment_t1(ctx, i);
-
-                    // printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text);
-                }
+                // printf("[%s --> %s]  %s\n", to_timestamp(t0).c_str(), to_timestamp(t1).c_str(), text);
             }
         }
     }
     // }
     jsonResult["text"] = text_result;
     // whisper_print_timings(ctx);
-    whisper_free(ctx);
+    whisper_free(ctx); 
     return jsonResult;
 }
 
@@ -336,6 +377,26 @@ extern "C"
     {
         json jsonBody;
         jsonBody["@type"] = "al";
+        jsonBody["@type"] = "getTextFromWavFile";
+
+        jsonBody["is_translate"] = true;
+
+        jsonBody["threads"] = 6;
+
+        jsonBody["is_verbose"] = false;
+
+        jsonBody["language"] = "id";
+
+        jsonBody["is_special_tokens"] = false;
+
+        jsonBody["is_no_timestamps"] = false;
+
+        jsonBody["audio"] = "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/jfk.wav";
+
+        jsonBody["model"] = "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/ggml-model-whisper-base.bin";
+
+        jsonBody["processors"] = 1;
+
         print(transcribe(jsonBody).dump());
         return 0;
     }

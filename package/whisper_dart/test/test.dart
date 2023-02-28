@@ -1,47 +1,20 @@
-// import 'package:universal_io/io.dart';
-// import 'package:galaxeus_lib/json_to_script_dart/json_to_script.dart';
-// // import 'package:path/path.dart' as p;
+// ignore_for_file: non_constant_identifier_names
 
-// void main() async {
-//   await jsonToScripts(
-//     [
-//       {
-//         "@type": "getTextFromWavFile",
-//         "is_translate": false,
-//         "threads": 12,
-//         "is_verbose": false,
-//         "language": "id",
-//         "is_special_tokens": false,
-//         "is_no_timestamps": false,
-//         "audio": "./audio.wav",
-//         "model": "./model.bin",
-//       },
-//       {
-//         "@type": "getVersion",
-//       }
-//     ],
-//     directory: Directory(
-//       p.join(Directory.current.path, "lib", "api"),
-//     ),
-//   );
-//   await jsonToScripts(
-//     [
-//       {
-//         "@type": "Transcribe",
-//         "text": "",
-//       },
-//       {
-//         "@type": "Version",
-//         "message": "",
-//       },
-//       {
-//         "@type": "Error",
-//         "message": "",
-//       },
-//       {"@type": "WhisperResponse", "text": "", "message": ""},
-//     ],
-//     directory: Directory(
-//       p.join(Directory.current.path, "lib", "scheme"),
-//     ),
-//   );
-// }
+import 'package:universal_io/io.dart';
+import 'package:whisper_dart/whisper_dart.dart';
+
+void main(List<String> arguments) async {
+  // DateTime time = DateTime.now();
+  // print(res);
+  Whisper whisper = Whisper(
+    whisperLib: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/native_lib/build/libwhisper.so",
+  );
+  var version = await whisper.getVersion();
+  print(version.message);
+  var res = await whisper.transcribe(
+    audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav").path,
+    model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/ggml-model-whisper-base.bin").path,
+    language: "en"
+  );
+  print(res.toString());
+}

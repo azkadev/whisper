@@ -44,10 +44,7 @@ class Whisper {
     whisperLib ??= whisper_lib;
     Map result = await Isolate.run(() async {
       Pointer<Utf8> data = whisperRequest.toString().toNativeUtf8();
-      var res = openLib(whisperLib: whisperLib)
-          .lookupFunction<whisper_request_native, whisper_request_native>(
-              "request")
-          .call(data);
+      var res = openLib(whisperLib: whisperLib).lookupFunction<whisper_request_native, whisper_request_native>("request").call(data);
       Map result = json.decode(res.toDartString());
       malloc.free(data);
       return result;
