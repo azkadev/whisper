@@ -52,34 +52,31 @@ I only have this device, so sorry I can't test other devices
 ## example
 example dengan auto convert dari semua jenis audio ke wav whisper, `ffmpeg` harus terinstall
 ```dart
-// ignore_for_file: non_constant_identifier_names
-import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:universal_io/io.dart';
-import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
+import "dart:io";
+import "package:whisper_dart/scheme/scheme.dart";
+import "package:whisper_dart/whisper_dart.dart";
+void main(List<String> args) async {
+  Whisper whisper = Whisper(whisperLib: "./path_library_shared_whisper");
+  Version whisperVersion = await whisper.getVersion();
+  print(whisperVersion);
 
-void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
-  // print(res);
-  Whisper whisper = Whisper(
-    whisperLib: "whisper.cpp/whisper.so",
+  Transcribe transcribe = await whisper.transcribe(
+    audio: "./path_file_audio_wav_16_bit",
+    model: "./path_model_whisper_bin",
+    language: "id", // language
   );
-  try {
-    var res = whisper.request(
-      whisperRequest: WhisperRequest.fromWavFile(
-        /// auto convert to wav 16 
-        audio: WhisperAudioconvert.convert(
-          audioInput: File("samples/audio.ogg"),
-          audioOutput: File("samples/output.wav"),
-        ),
-        model: File("models/ggml-model-whisper-small.bin"),
-      ),
-    );
-    print(res.toString());
-    print(convertToAgo(time.millisecondsSinceEpoch));
-  } catch (e) {
-    print(e);
-  }
+  print(transcribe);
+
+  /// auto convert any fideo
+  Transcribe transcribeAnyAudio = await whisper.transcribe(
+    audio: WhisperAudioconvert.convert(
+      audioInput: File("./path_audio_any_format"),
+      audioOutput: File("./path_audio_convert.wav"),
+    ).path,
+    model: "./path_model_whisper_bin",
+    language: "id", // language
+  );
+  print(transcribeAnyAudio);
 }
 ```
 result

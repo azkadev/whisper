@@ -44,7 +44,10 @@ class Whisper {
     whisperLib ??= whisper_lib;
     Map result = await Isolate.run(() async {
       Pointer<Utf8> data = whisperRequest.toString().toNativeUtf8();
-      var res = openLib(whisperLib: whisperLib).lookupFunction<whisper_request_native, whisper_request_native>("request").call(data);
+      var res = openLib(whisperLib: whisperLib)
+          .lookupFunction<whisper_request_native, whisper_request_native>(
+              "request")
+          .call(data);
       Map result = json.decode(res.toDartString());
       malloc.free(data);
       return result;
@@ -62,6 +65,11 @@ class Whisper {
     bool is_special_tokens = false,
     bool is_no_timestamps = false,
     String? whisperLib,
+    int n_processors = 1,
+    bool split_on_word = false,
+    bool no_fallback = false,
+    bool diarize = false,
+    bool speed_up = false,
   }) async {
     // whisperLib ??= whisper_lib;
     WhisperResponse result = await request(
@@ -76,6 +84,11 @@ class Whisper {
           is_verbose: is_verbose,
           language: language,
           threads: threads,
+          n_processors: n_processors,
+          split_on_word: split_on_word,
+          no_fallback: no_fallback,
+          diarize: diarize,
+          speed_up: speed_up,
         ).toJson(),
       ),
       whisperLib: whisperLib,

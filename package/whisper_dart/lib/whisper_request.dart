@@ -16,16 +16,20 @@ class WhisperRequest {
     ).toJson());
   }
 
-  factory WhisperRequest.fromWavFile({
-    required File audio,
-    required File model,
-    bool is_translate = false,
-    int threads = 4,
-    bool is_verbose = false,
-    String language = "id",
-    bool is_special_tokens = false,
-    bool is_no_timestamps = false,
-  }) {
+  factory WhisperRequest.fromWavFile(
+      {required File audio,
+      required File model,
+      bool is_translate = false,
+      int threads = 4,
+      bool is_verbose = false,
+      String language = "id",
+      bool is_special_tokens = false,
+      bool is_no_timestamps = false,
+      int n_processors = 1,
+      bool split_on_word = false,
+      bool no_fallback = false,
+      bool diarize = false,
+      bool speed_up = false}) {
     return WhisperRequest(whisper_api.GetTextFromWavFile.create(
       special_type: "getTextFromWavFile",
       is_translate: is_translate,
@@ -36,6 +40,11 @@ class WhisperRequest {
       is_no_timestamps: is_no_timestamps,
       audio: audio.path,
       model: model.path,
+      n_processors: n_processors,
+      split_on_word: split_on_word,
+      no_fallback: no_fallback,
+      diarize: diarize,
+      speed_up: speed_up,
     ).toJson());
   }
 

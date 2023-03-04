@@ -7,14 +7,19 @@ void main(List<String> arguments) async {
   // DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
-    whisperLib: "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/native_lib/build/libwhisper.so",
+    whisperLib:
+        "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/native_lib/build/libwhisper.so",
   );
   var version = await whisper.getVersion();
   print(version.message);
   var res = await whisper.transcribe(
-    audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav").path,
-    model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/ggml-model-whisper-base.bin").path,
-    language: "en"
+    audio: File(
+            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav")
+        .path,
+    model: File(
+            "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/ggml-model-whisper-small.bin")
+        .path,
+    language: "id",
   );
   print(res.toString());
 }

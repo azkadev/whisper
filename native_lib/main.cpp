@@ -98,9 +98,8 @@ int timestamp_to_sample(int64_t t, int n_samples)
 // command-line parameters
 struct whisper_params
 {
-    int32_t seed = -1; // RNG seed, not used currently
+    int32_t seed = -1;
     int32_t n_threads = std::min(4, (int32_t)std::thread::hardware_concurrency());
-
     int32_t n_processors = 1;
     int32_t offset_t_ms = 0;
     int32_t offset_n = 0;
@@ -109,11 +108,9 @@ struct whisper_params
     int32_t max_len = 0;
     int32_t best_of = 5;
     int32_t beam_size = -1;
-
     float word_thold = 0.01f;
     float entropy_thold = 2.40f;
     float logprob_thold = -1.00f;
-
     bool verbose = false;
     bool print_special_tokens = false;
     bool speed_up = false;
@@ -130,7 +127,6 @@ struct whisper_params
     bool print_colors = false;
     bool print_progress = false;
     bool no_timestamps = false;
-
     std::string language = "id";
     std::string prompt;
     std::string model = "models/ggml-model-whisper-small.bin";
@@ -156,6 +152,12 @@ json transcribe(json jsonBody)
     params.no_timestamps = jsonBody["is_no_timestamps"];
     params.model = jsonBody["model"];
     params.audio = jsonBody["audio"];
+    params.n_processors = jsonBody["n_processors"];
+    params.split_on_word = jsonBody["split_on_word"];
+    params.no_fallback = jsonBody["no_fallback"];
+    params.diarize = jsonBody["diarize"];
+    params.speed_up = jsonBody["speed_up"];
+    
     json jsonResult;
     jsonResult["@type"] = "transcribe";
 

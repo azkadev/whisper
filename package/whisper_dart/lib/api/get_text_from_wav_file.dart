@@ -6,7 +6,17 @@ class GetTextFromWavFile extends JsonDart {
   GetTextFromWavFile(super.rawData);
 
   static Map get defaultData {
-    return {"@type": "getTextFromWavFile", "is_translate": false, "threads": 12, "is_verbose": false, "language": "id", "is_special_tokens": false, "is_no_timestamps": false, "audio": "./audio.wav", "model": "./model.bin"};
+    return {
+      "@type": "getTextFromWavFile",
+      "is_translate": false,
+      "threads": 12,
+      "is_verbose": false,
+      "language": "id",
+      "is_special_tokens": false,
+      "is_no_timestamps": false,
+      "audio": "./audio.wav",
+      "model": "./model.bin"
+    };
   }
 
   String? get special_type {
@@ -118,6 +128,11 @@ class GetTextFromWavFile extends JsonDart {
     bool? is_no_timestamps,
     String? audio,
     String? model,
+    int n_processors = 1,
+    bool split_on_word = false,
+    bool no_fallback = false,
+    bool diarize = false,
+    bool speed_up = false,
   }) {
     GetTextFromWavFile getTextFromWavFile = GetTextFromWavFile({
       "@type": special_type,
@@ -129,17 +144,12 @@ class GetTextFromWavFile extends JsonDart {
       "is_no_timestamps": is_no_timestamps,
       "audio": audio,
       "model": model,
-      "processors": 1,
+      "n_processors": n_processors,
+      "split_on_word": split_on_word,
+      "no_fallback": no_fallback,
+      "diarize": diarize,
+      "speed_up": speed_up,
     });
-
-    getTextFromWavFile.rawData.forEach((key, value) {
-      print("""
-
-jsonBody[\"${key}\"] = ${value};
-
-""");
-    });
-
     return getTextFromWavFile;
   }
 }

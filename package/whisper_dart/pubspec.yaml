@@ -1,14 +1,11 @@
 name: whisper_dart
 description: Openai library whisper unofficial for recognition audio to text without heavy gpu, support server side and client side.
-version: 0.0.10
+version: 0.0.11
 homepage: https://github.com/azkadev/whisper_dart.git
 repository: https://github.com/azkadev/whisper_dart.git
 
 environment:
   sdk: '>=2.19.0 <3.0.0'
-
-# dependencies:
-#   path: ^1.8.0
 
 dev_dependencies:
   lints: ^2.0.0
@@ -16,5 +13,5 @@ dev_dependencies:
 dependencies:
   ffi: ^2.0.1
   ffmpeg_dart: ^0.0.0
-  galaxeus_lib: ^0.0.53
-  universal_io: ^2.0.4
+  galaxeus_lib: ^0.0.55
+  universal_io: ^2.2.0

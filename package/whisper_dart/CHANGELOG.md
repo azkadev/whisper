@@ -1,3 +1,6 @@
+## 0.0.11
+- update depends package and add example
+
 ## 0.0.10
 - update style code && improve speed
 
