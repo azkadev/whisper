@@ -105,3 +105,7 @@ var res = await whisper.request(
 );
 ```
  
+
+### Note
+
+Untuk perangkat macOS, IOS saat ini saya belum mencoba karena gak ada device
