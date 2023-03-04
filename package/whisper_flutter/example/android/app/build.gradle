@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     compileSdkVersion flutter.compileSdkVersion
-    ndkVersion "25.1.8937393"
+    ndkVersion flutter.ndkVersion
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -37,13 +37,9 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
- 
 
     sourceSets {
-        main {
-            java.srcDirs += 'src/main/kotlin'
-            // jniLibs.srcDirs = ['src/main/jniLibs']
-        }
+        main.java.srcDirs += 'src/main/kotlin'
     }
 
     defaultConfig {
