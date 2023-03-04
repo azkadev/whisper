@@ -4,13 +4,13 @@ import "json_dart.dart";
 
 
 
-class Task extends JsonDart {
+class GetTask extends JsonDart {
 
   
-  Task(super.rawData);
+  GetTask(super.rawData);
    
   static Map get defaultData {
-    return {"@type":"task","key":"","password":"","expire_date":1677963997505};
+    return {"@type":"getTask","key":"","password":""};
   }
 
   
@@ -53,38 +53,23 @@ class Task extends JsonDart {
 
 
   
-  int? get expire_date {
-    try {
-      if (rawData["expire_date"] is int == false){
-        return null;
-      }
-      return rawData["expire_date"] as int;
-    } catch (e) {
-      return null;
-    }
-  }
-
-
-  
-  static Task create({
+  static GetTask create({
 
     String? special_type,
     String? key,
     String? password,
-    int? expire_date,
 })  {
-    Task task = Task({
+    GetTask getTask = GetTask({
   
       "@type": special_type,
       "key": key,
       "password": password,
-      "expire_date": expire_date,
 
 
   });
 
 
-return task;
+return getTask;
 
       }
 }

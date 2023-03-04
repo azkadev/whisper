@@ -29,6 +29,14 @@ void main(List<String> args) async {
       "key": "",
       "password": "",
       "expire_date": DateTime.now().millisecondsSinceEpoch,
+    },
+    {
+      "@type": "getTask",
+      "key": "",
+      "password": "",
+    },
+    {
+      "@type": "ok"
     }
   ];
 
