@@ -374,32 +374,4 @@ extern "C"
         jsonResult["message"] = "method not found";
         return jsonToChar(jsonResult);
     }
-
-    int main()
-    {
-        json jsonBody;
-        jsonBody["@type"] = "al";
-        jsonBody["@type"] = "getTextFromWavFile";
-
-        jsonBody["is_translate"] = true;
-
-        jsonBody["threads"] = 6;
-
-        jsonBody["is_verbose"] = false;
-
-        jsonBody["language"] = "id";
-
-        jsonBody["is_special_tokens"] = false;
-
-        jsonBody["is_no_timestamps"] = false;
-
-        jsonBody["audio"] = "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/jfk.wav";
-
-        jsonBody["model"] = "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/ggml-model-whisper-base.bin";
-
-        jsonBody["processors"] = 1;
-
-        print(transcribe(jsonBody).dump());
-        return 0;
-    }
 }
