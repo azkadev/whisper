@@ -139,7 +139,6 @@ class _MyHomePageState extends State<MyHomePage> {
                               whisperLib: "libwhisper.so",
                             );
                             var res = await whisper.request(
-                              whisperLib: "libwhisper.so",
                               whisperRequest: WhisperRequest.fromWavFile(
                                 audio: File(audio),
                                 model: File(model),

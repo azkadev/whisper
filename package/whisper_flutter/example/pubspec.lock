@@ -138,10 +138,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_plugin_android_lifecycle
-      sha256: "60fc7b78455b94e6de2333d2f95196d32cf5c22f4b0b0520a628804cb463503b"
+      sha256: c224ac897bed083dabf11f238dd11a239809b446740be0c2044608c50029ffdf
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.7"
+    version: "2.0.9"
   flutter_test:
     dependency: "direct dev"
     description: flutter
@@ -156,10 +156,10 @@ packages:
     dependency: transitive
     description:
       name: galaxeus_lib
-      sha256: "3f691dd4746481215651c8ff611db324fba50973dd6121944a4a5d137d554281"
+      sha256: "1b459f559c97cbc495871a5d09c5000cd674a01fe10f5adc598fcce4d6740fd2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.53"
+    version: "0.0.55"
   http:
     dependency: transitive
     description:
@@ -228,10 +228,10 @@ packages:
     dependency: "direct dev"
     description:
       name: packagex
-      sha256: "62845a5f5953ac7ea53c960b6ca28b6dad7763a3e7a36319ca093c58272b9330"
+      sha256: a77fe6ae343f017632715b0de7154d57217aed44f03a2799aba435ee8776b764
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.12"
+    version: "0.0.13"
   path:
     dependency: transitive
     description:
@@ -244,10 +244,10 @@ packages:
     dependency: transitive
     description:
       name: plugin_platform_interface
-      sha256: dbf0f707c78beedc9200146ad3cb0ab4d5da13c246336987be6940f026500d3a
+      sha256: "6a2128648c854906c53fa8e33986fc0247a1116122f9534dd20e3ab9e16a32bc"
       url: "https://pub.dev"
     source: hosted
-    version: "2.1.3"
+    version: "2.1.4"
   pointycastle:
     dependency: transitive
     description:
@@ -337,17 +337,17 @@ packages:
     dependency: transitive
     description:
       name: whisper_dart
-      sha256: cfc7577a4b5e6768e1748b7d359276c75886131c99ef377ad86398bd4076ab3b
+      sha256: "025146bea63b02d92ffaf92537d638d97e5ca13d17b75b4b9c088d46e6528f90"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.9"
+    version: "0.0.11"
   whisper_flutter:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.0.2"
+    version: "0.0.3"
   win32:
     dependency: transitive
     description:

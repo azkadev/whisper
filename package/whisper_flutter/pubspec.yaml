@@ -1,6 +1,6 @@
 name: whisper_flutter
 description: whisper.cpp (from @ggerganov) implementation using ffi, a library for recognition audio to text without heavy gpu, support server side and client side.
-version: 0.0.2
+version: 0.0.3
 homepage: https://github.com/azkadev/whisper_dart.git
 repository: https://github.com/azkadev/whisper_dart.git
 
@@ -13,7 +13,7 @@ dependencies:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
   ffi: ^2.0.1
-  whisper_dart: ^0.0.9
+  whisper_dart: ^0.0.11
 
 dev_dependencies:
   ffigen: ^6.1.2
