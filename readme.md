@@ -55,10 +55,7 @@ Untuk devices lainya saya tidak tahu bisa / enggak karena saya tidak ada devices
 
 1. [JeisonSanches](https://github.com/JeisonSanches) - [Whisper Flutter](https://github.com/azkadev/whisper_dart/tree/main/package/whisper_flutter)
 
-
 ## Quickstart
-
-
 1. Dart
 Jika anda ingin menggunakan whisper di cli / backend server anda menggunakan ini
 
@@ -72,7 +69,6 @@ dart pub add whisper_dart
 ```dart
 import "package:whisper_dart/whisper_dart.dart";
 ```
-
 
 2. Flutter app
 
@@ -89,9 +85,7 @@ flutter pub add wisper_flutter
 import "package:whisper_flutter/whisper_flutter.dart";
 ```
 
-
 ### Code
-
 
 ```dart
 Whisper whisper = Whisper();
