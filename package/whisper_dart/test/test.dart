@@ -8,7 +8,7 @@ void main(List<String> arguments) async {
   // print(res);
   Whisper whisper = Whisper(
     whisperLib:
-        "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/native_lib/build/libwhisper.so",
+        "/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/native_lib/build/libwhisper_new.so",
   );
   var version = await whisper.getVersion();
   print(version.message);

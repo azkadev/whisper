@@ -357,19 +357,16 @@ extern "C"
     {
         json jsonBody = json::parse(body);
         json jsonResult;
-
         if (jsonBody["@type"] == "getTextFromWavFile")
         {
             return jsonToChar(transcribe(jsonBody));
         }
-
         if (jsonBody["@type"] == "getVersion")
         {
             jsonResult["@type"] = "version";
             jsonResult["message"] = "version lib v0.0.0";
             return jsonToChar(jsonResult);
         }
-
         jsonResult["@type"] = "error";
         jsonResult["message"] = "method not found";
         return jsonToChar(jsonResult);

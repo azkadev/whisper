@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=0.0.0
+Name=whisper-server
+GenericName=General Application
+Exec=whisper_server %U
+Categories=Music;Media;
+Keywords=Hello;World;Test;Application;
+StartupNotify=true
