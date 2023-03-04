@@ -1,3 +1,6 @@
+// ignore_for_file: non_constant_identifier_names
+
+import 'dart:async';
 import 'dart:io';
 
 import "package:alfred/alfred.dart";
@@ -7,6 +10,9 @@ void main(List<String> arguments) async {
   int port = int.parse(Platform.environment["PORT"] ?? "8080");
   String host = Platform.environment["HOST"] ?? "0.0.0.0";
   Whisper whisper = Whisper();
+  int count_task = 0;
+  int max_task = 1;
+
   Alfred app = Alfred(
     logLevel: LogType.error,
     onNotFound: (req, res) {
@@ -43,13 +49,29 @@ void main(List<String> arguments) async {
       };
     }
 
-    if (method == "transcribeFromAudio") {
-      
-    }
+    if (method == "getTranscribe") {}
 
     return {
       "@type": "ok",
     };
   });
-  await app.listen(port, host);
+
+  await app.listen(
+    port,
+    host,
+  );
+  print("server run");
+  Timer.periodic(Duration(milliseconds: 500), (timer) async {
+    if (count_task >= max_task) {
+      return;
+    }
+    count_task++;
+    try {
+      await whisper.transcribe(
+        audio: "audio",
+        model: "audio",
+      );
+    } catch (e) {}
+    count_task--;
+  });
 }
