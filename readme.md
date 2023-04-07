@@ -76,7 +76,7 @@ Jika anda ingin menggunakan whisper di app anda menggunakan ini
 
 - Install package dulu
 ```bash
-flutter pub add wisper_flutter
+flutter pub add whisper_flutter
 ```
 
 - Tambahkan library
