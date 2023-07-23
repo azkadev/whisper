@@ -9,11 +9,14 @@ Whisper adalah project open source dari [openai](https://github.com/openai) untu
 https://user-images.githubusercontent.com/82513502/220721473-3303ab00-e272-4b58-bfe5-86fb9db05814.mp4
 
 
-### Information
 
-ENGLISH: I'm currently a little busy and maybe this library is not being updated, if you want to contribute please make a pull request, thank you <br>
-INDONESIA: Saat ini saya sedikit sibuk dan mungkin library ini tidak di update, jika anda ingin berkontribusi silahkan  buat pull request ya terimakasi
+## NEED More Update And More Features?
 
+Indonesia: jika anda ingin saya maintance terus project ini silahkan [donate ke saya](https://github.com/sponsors/azkadev)
+<br>
+English: if you want me to continue to maintain this project please [donate to me](https://github.com/sponsors/azkadev)
+
+ 
 ## Resources
 
 Assets yang di perlukan.
