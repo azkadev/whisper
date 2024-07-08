@@ -1,3 +1,5 @@
+someone stole my design/style code, I became lazy to update
+
 # Whisper
 
 Whisper is an open source project from [openai](https://github.com/openai) to extract text from sound, this project uses [whisper.cpp](https://github.com/ggerganov/whisper.cpp), And use [FFMPEG](https://github.com/FFmpeg/FFmpeg) To convert audio to WAV, this project can be run on the client side and server side and does not require internet.
