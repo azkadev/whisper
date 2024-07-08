@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names
+
 /* <!-- START LICENSE -->
 
 
@@ -30,5 +32,29 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 
 <!-- END LICENSE --> */
-export "get_text_from_wav_file.dart";
-export "get_version.dart";
+import 'package:general_lib/json_to_script_dart/json_to_script.dart';
+import 'package:path/path.dart';
+import 'package:whisper/schemes/api_schemes.dart';
+import 'dart:io';
+
+import 'package:whisper/schemes/respond_schemes.dart';
+
+void main(List<String> args) async {
+  Directory directory_scheme = Directory(
+    join(Directory.current.path, "lib", "scheme"),
+  );
+
+  await jsonToScripts(
+    api_schemes,
+    directory: Directory(
+      join(directory_scheme.path, "api_scheme"),
+    ),
+  );
+
+  await jsonToScripts(
+    respond_schemes,
+    directory: Directory(
+      join(directory_scheme.path, "respond_scheme"),
+    ),
+  );
+}

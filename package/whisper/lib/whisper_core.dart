@@ -35,9 +35,9 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 // ignore_for_file: non_constant_identifier_names, unnecessary_string_interpolations
 
 import 'package:general_lib/general_lib.dart';
-import 'package:whisper_scheme/scheme/api_scheme/get_text_from_wav_file.dart';
+import 'package:whisper/scheme/api_scheme/get_text_from_wav_file.dart';
 // import 'package:universal_io/io.dart';
-import 'package:whisper_scheme/scheme/respond_scheme/respond_scheme.dart';
+import 'package:whisper/scheme/respond_scheme/respond_scheme.dart';
 
 class Whisper {
   String whisper_lib = "libwhisper.${getFormatLibrary}";

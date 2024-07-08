@@ -1,4 +1,4 @@
-dependency_overrides:
-  whisper_scheme:
-    path: ../whisper_scheme
+# dependency_overrides:
+#   whisper_scheme:
+#     path: ../whisper_scheme
     

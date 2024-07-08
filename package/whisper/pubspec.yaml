@@ -22,11 +22,9 @@ environment:
 dependencies: 
   ffi: '^2.0.1'
   ffmpeg_dart: '^0.0.0' 
-  general_lib: ^0.0.34
+  general_lib: ^0.0.42
   universal_io: '^2.2.0'
-  whisper_scheme:
-    path: ../whisper_scheme
-
+  
 dev_dependencies: 
   lints: '^2.0.0'
   test: '^1.16.0'
