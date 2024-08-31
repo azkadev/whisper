@@ -43,8 +43,7 @@ class WhisperLibraryBindings {
   }
 
   late final _sumPtr =
-      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Int)>>(
-          'sum');
+      _lookup<ffi.NativeFunction<ffi.Int Function(ffi.Int, ffi.Int)>>('sum');
   late final _sum = _sumPtr.asFunction<int Function(int, int)>();
 
   /// A longer lived native function, which occupies the thread calling it.

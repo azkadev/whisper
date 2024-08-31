@@ -1,92 +1,144 @@
-# whisper_library
+# Whisper
 
-A new Flutter FFI plugin project.
+Whisper adalah sebuah library opensource milik open ai yang berguna untuk mengubah / mendapatkan text dari sebuah audio
 
-## Getting Started
 
-This project is a starting point for a Flutter
-[FFI plugin](https://docs.flutter.dev/development/platform-integration/c-interop),
-a specialized package that includes native code directly invoked with Dart FFI.
+## Peringatan
 
-## Project structure
+Library ini di buat 100% tanpa menjiplak kode orang lain, jika anda ingin feature silahkan request (jangan menulis ulang lalu mengpublish di pub.dev) / tempat lainya tanpa mencamtumkan nama SAYA [AZKADEV](https://github.com/azkadev)
 
-This template uses the following structure:
 
-* `src`: Contains the native source code, and a CmakeFile.txt file for building
-  that source code into a dynamic library.
+## Demo
 
-* `lib`: Contains the Dart code that defines the API of the plugin, and which
-  calls into the native code using `dart:ffi`.
 
-* platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
-  for building and bundling the native code library with the platform application.
+## Status
 
-## Building and bundling native code
 
-The `pubspec.yaml` specifies FFI plugins as follows:
+## Version 1.6.2
 
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        ffiPlugin: true
-```
+## Features
 
-This configuration invokes the native build for the various target platforms
-and bundles the binaries in Flutter applications using these FFI plugins.
+1. Cross Platform
+   - [x] linux
+   - [x] android
+   - [x] cli
+   - [ ] windows
+   - [ ] macos
+   - [ ] web
+   - [ ] ios
+  
+2. Realtime Transcribe
+   - [ ] android
+   - [ ] linux
+   - [ ] macos
+   - [ ] cli
+   - [ ] windows
+   - [ ] web
+   - [ ] ios
 
-This can be combined with dartPluginClass, such as when FFI is used for the
-implementation of one platform in a federated plugin:
+3. Bisa Transcribe Semua jenis audio / video Tanpa perlu manual convert / rubah ke wav
+   - [ ] android
+   - [ ] linux
+   - [ ] macos
+   - [ ] cli
+   - [ ] windows
+   - [ ] web
+   - [ ] ios
 
-```yaml
-  plugin:
-    implements: some_other_plugin
-    platforms:
-      some_platform:
-        dartPluginClass: SomeClass
-        ffiPlugin: true
-```
+## Device Tested
+| NAME            | OS                  | CPU             | GPU | RAM  |
+|-----------------|---------------------|-----------------|-----|------|
+| REALME 5        | LINEAGE OS ANDROID  | SNAPDRAGON 665  |     | 3GB  |
+| MSI MODERN 14   | UBUNTU 24.04        | AMD RYZEN 5500u |     | 16GB |
+| XIAOMI REDMI 4a | MIUI                |                 |     | 2GB  |
+| ACER            | UBUNTU SERVER 24.04 |                 |     |      |
 
-A plugin can have both FFI and method channels:
+## Support
 
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        pluginClass: SomeName
-        ffiPlugin: true
-```
+jika anda berharap saya menerapkan pada platform tertentu selain linux / android berikan saya donasi uang di github agar saya bisa membeli perangkat, karena saat ini perangkat saya hanya 2
 
-The native build systems that are invoked by FFI (and method channel) plugins are:
 
-* For Android: Gradle, which invokes the Android NDK for native builds.
-  * See the documentation in android/build.gradle.
-* For iOS and MacOS: Xcode, via CocoaPods.
-  * See the documentation in ios/whisper_library.podspec.
-  * See the documentation in macos/whisper_library.podspec.
-* For Linux and Windows: CMake.
-  * See the documentation in linux/CMakeLists.txt.
-  * See the documentation in windows/CMakeLists.txt.
+## Kenapa Di Tulis ulang?
 
-## Binding to native code
+Di karenakan versi lama sangat kacau / berantakan, saya membuat ulang menggunakan style code yang hampir sama, namun semuanya di rubah agar bisa berjalan cross platform dan support semua feature terbaru dari sumber asli [Whisper.cpp]
 
-To use the native code, bindings in Dart are needed.
-To avoid writing these by hand, they are generated from the header file
-(`src/whisper_library.h`) by `package:ffigen`.
-Regenerate the bindings by running `dart run ffigen --config ffigen.yaml`.
+## Bagaimana Ini Bekerja
 
-## Invoking native code
+Sebenarnya saya menggunakan 3 kerangka kerja agar library ini berjalan
 
-Very short-running native functions can be directly invoked from any isolate.
-For example, see `sum` in `lib/whisper_library.dart`.
+1. Bagaimana bisa berjalan di DART
+   secara contoh asli yang ada pada whisper.cpp terdapat sumber code untuk menjalankan di cli 
+   yang harus menjalankan command seperti
+   ./main bla bla bla bla -model path_to_model
+   
+   itu adalah sumber acuan pertama agar kita bisa mengubah sumber code.
 
-Longer-running functions should be invoked on a helper isolate to avoid
-dropping frames in Flutter applications.
-For example, see `sumAsync` in `lib/whisper_library.dart`.
+   Contoh:
+   ini adalah source asli
 
-## Flutter help
+   saya menambah bagian sedikit, dan mengubah parameters data menjadi json, hal ini di karenakan json flexible sehingga sangat mudah di pakai dan di applikasikan ke berbagai program
+   setelah itu saya membuat CMakeLists.txt ini untuk mengcompile semua source code cpp / c / native yang di butuhkan
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. Bagaimana Bisa berjalan di FLUTTER
+   secara teori jika anda berhasil melakukan tadi menjalankan di dart maka akan berjalan di flutter hal ini karena flutter menggunakan bahasa dart
 
+3. Bagaimana Bisa berjalan di web / wasm
+   secara teori jika anda berhasil menjalankan di dart jika anda bisa mengubah style code dasar yang akan di gunakan secara general (SCHEMA) anda bisa menjalankan di web walaupun mungkin ada feature yang tidak bisa di gunakan seperti auto convert
+
+## Kenapa harus support saya?
+
+Di karenakan kebanyakan library hanya fokus pada platform tertentu tidak ingin / tidak ada rencana berjalan di semua platform oleh karena itu mungkin anda bisa mengsupport saya melalui hal di bawah
+
+1. DONATE / SPONSOR
+   Sebenarnya selain saya membuat library untuk orang umum / mempermudah saya juga ingin mendapat dana agar saya bisa mempercepat release baru, semakin banyak donate akan ada kesempatan untuk release baru program / support pada platform tertentu
+
+2. FOLLOW SOCIAL MEDIA
+   Saya ingin memperoleh penghasilan lainya sekaligus mengshare kontent tentang developer hal lainya mungkin jika anda tidak keberatan silahkan follow semuanya
+
+## Install
+
+
+## Cross platform?
+
+tapi tidak ada tag dart di pub.dev? 
+
+Hiraukan issue itu saya menambahkan flutter di library whisper sehingga library menjadi satu dan anda hanya merubah bagian import saja sesuai platform anda
+
+## Quickstart
+
+
+## Credit
+
+1. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
+2. [GGML]()
+
+## FAQS
+
+> Q: Akankah anda akan support dart penuh tanpa native library?
+> A: Jika sumber uang saya banyak saya akan mengsupport penuh sehingga whisper akan berjalan sangat efficient
+
+> Q: Saya ingin mengkomersialkan applikasi saya transcribe apakah saya harus membayar license / mencantumkan nama anda?
+> A: Tidak perlu membayar license, ya sebaiknya anda mencantumkan saja nama saya / link social media saya
+
+> Q: Saya ingin menambahkan di bot TELEGRAM | DISCORD | WA apakah bisa?
+> A: Tentu namun saat ini saya hanya mengtest di cli di platform linux, jika anda berhasil compile library ke platform anda anda sudah bisa menggunakanya
+
+# LICENSE
+
+Tolong jangan mencoba membuat ulang code ini, jika ingin menambah silahkan cantumkan nama saya dan link github saya di project anda
+
+
+
+Copyright 2023-2024 NOW - AZKADEV https://github.com/azkadev
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.

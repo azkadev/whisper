@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:ffi';
 import 'dart:io';
@@ -51,7 +50,6 @@ final DynamicLibrary _dylib = () {
 
 /// The bindings to the native functions in [_dylib].
 final WhisperLibraryBindings _bindings = WhisperLibraryBindings(_dylib);
-
 
 /// A request to compute `sum`.
 ///
