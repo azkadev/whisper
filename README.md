@@ -13,7 +13,8 @@ Library ini di buat 100% tanpa menjiplak kode orang lain, jika anda ingin featur
 
 ## Status
 
-Sudah siap di gunakan untuk umum / produksi 
+
+## Version 1.6.2
 
 ## Features
 
@@ -108,7 +109,7 @@ Hiraukan issue itu saya menambahkan flutter di library whisper sehingga library 
 
 ## Credit
 
-1. [Whisper.cpp]()
+1. [Whisper.cpp](https://github.com/ggerganov/whisper.cpp)
 2. [GGML]()
 
 ## FAQS
