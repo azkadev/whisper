@@ -1,0 +1,39 @@
+name: 'whisper_flutter'
+description: 'A new Flutter plugin project.'
+version: '0.0.1'
+homepage: null
+environment: 
+  sdk: '>=3.3.3 <4.0.0'
+  flutter: '>=3.3.0'
+dependencies: 
+  flutter: 
+    sdk: 'flutter'
+  flutter_web_plugins: 
+    sdk: 'flutter'
+  web: '^0.5.1'
+  plugin_platform_interface: '^2.0.2'
+dev_dependencies: 
+  flutter_test: 
+    sdk: 'flutter'
+  flutter_lints: '^3.0.0'
+flutter: 
+  plugin: 
+    platforms: 
+      android: 
+        package: 'global_corporation.azkadev.whisper_flutter'
+        pluginClass: 'WhisperFlutterPlugin'
+      ios: 
+        pluginClass: 'WhisperFlutterPlugin'
+      linux: 
+        pluginClass: 'WhisperFlutterPlugin'
+      macos: 
+        pluginClass: 'WhisperFlutterPlugin'
+      windows: 
+        pluginClass: 'WhisperFlutterPluginCApi'
+      web: 
+        pluginClass: 'WhisperFlutterWeb'
+        fileName: 'whisper_flutter_web.dart'
+dependency_overrides: 
+  pointycastle: '3.8.0'
+funding: 
+  - 'https://github.com/sponsors/azkadev'
