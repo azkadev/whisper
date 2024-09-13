@@ -1,11 +1,12 @@
-final List<Map<String, dynamic>> api_schemes  = [
+final List<Map<String, dynamic>> api_schemes = [
   {
-"@type": "getVersion",
+    "@type": "getVersion",
+    "@return_type": "version",
   },
   {
-    "@type":"transcribeSync",
+    "@type": "transcribeSync",
   },
   {
-    "@type":"transcribeRealtime",
+    "@type": "transcribeRealtime",
   },
 ];

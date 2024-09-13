@@ -33,3 +33,5 @@ android/flutter/ephemeral
 linux/flutter/ephemeral
 macos/Flutter/ephemeral
 windows/ephemeral
+tmp/
+temp/

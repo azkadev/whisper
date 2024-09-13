@@ -15,3 +15,23 @@ x86/
 *.[Cc]ache
 # but keep track of directories ending in .cache
 !*.[Cc]ache/
+*.exe
+*.deb
+*.sqlite-*
+*.sqlite
+docs/canvaskit
+*/canvaskit
+.dart_tool/
+build/
+ephemeral/
+/build/
+generate_glx_*
+node_modules/
+flutter/ephemeral
+android/.gradle
+android/flutter/ephemeral
+linux/flutter/ephemeral
+macos/Flutter/ephemeral
+windows/ephemeral
+tmp/
+temp/

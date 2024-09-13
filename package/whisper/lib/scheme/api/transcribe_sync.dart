@@ -2,21 +2,39 @@
 import "package:general_lib/general_lib.dart";
 // import "dart:convert";
 
-
- 
 class TranscribeSync extends JsonScheme {
-
-  
   TranscribeSync(super.rawData);
-   
+
+  /// return default data
+  ///
   static Map get defaultData {
-    return {"@type":"transcribeSync"};
+    return {"@type": "transcribeSync"};
   }
 
-  
+  /// check data
+  /// if raw data
+  /// - rawData["@type"] == transcribeSync
+  /// if same return true
+  bool json_scheme_utils_checkDataIsSameBySpecialType() {
+    return rawData["@type"] == defaultData["@type"];
+  }
+
+  /// check value data whatever do yout want
+  bool json_scheme_utils_checkDataIsSameBuilder({
+    required bool Function(Map rawData, Map defaultData) onResult,
+  }) {
+    return onResult(rawData["@type"], defaultData["@type"]);
+  }
+
+  /// create [TranscribeSync]
+  /// Empty
+  static TranscribeSync empty() {
+    return TranscribeSync({});
+  }
+
   String? get special_type {
     try {
-      if (rawData["@type"] is String == false){
+      if (rawData["@type"] is String == false) {
         return null;
       }
       return rawData["@type"] as String;
@@ -25,32 +43,28 @@ class TranscribeSync extends JsonScheme {
     }
   }
 
-  
   set special_type(String? value) {
     rawData["@type"] = value;
   }
 
-
-  
   static TranscribeSync create({
-
+    bool schemeUtilsIsSetDefaultData = false,
     String special_type = "transcribeSync",
-})  {
+  }) {
     // TranscribeSync transcribeSync = TranscribeSync({
-Map transcribeSync_data_create_json = {
-  
+    final Map transcribeSync_data_create_json = {
       "@type": special_type,
+    };
 
+    transcribeSync_data_create_json.removeWhere((key, value) => value == null);
 
-};
-
-
-          transcribeSync_data_create_json.removeWhere((key, value) => value == null);
-TranscribeSync transcribeSync_data_create = TranscribeSync(transcribeSync_data_create_json);
-
-return transcribeSync_data_create;
-
-
-
-      }
+    if (schemeUtilsIsSetDefaultData) {
+      defaultData.forEach((key, value) {
+        if (transcribeSync_data_create_json.containsKey(key) == false) {
+          transcribeSync_data_create_json[key] = value;
+        }
+      });
+    }
+    return TranscribeSync(transcribeSync_data_create_json);
+  }
 }

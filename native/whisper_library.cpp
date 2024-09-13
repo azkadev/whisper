@@ -1226,18 +1226,21 @@ extern "C"
     void print(char* value) {
         std::cout << charToString(value) << std::endl;
     }
+    
     int calculate(int num_1, int num_2) {
         return num_1 * num_2;
     }
+
     char* request(char* data) {
         json jsonBody = json::parse(data);
         json jsonResult;
         jsonResult["@type"] = "error";
 
         if (jsonBody["@type"] == "getVersion") {
-
+            jsonResult["@type"] = "version";
             jsonResult["version"] = "0.0.0";
-            jsonResult["developer"]  = "azkadev";
+            jsonResult["whisper_version"] = "1.6.2";
+            jsonResult["developer"] = "azkadev";
             jsonResult["url_github"] = "https://github.com/azkadev/whisper";
             return jsonToChar(jsonResult);
         }

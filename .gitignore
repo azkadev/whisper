@@ -21,3 +21,5 @@ windows/ephemeral
 *.so
 
 whisper.cpp/
+tmp/
+temp/
