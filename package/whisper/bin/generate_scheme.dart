@@ -73,5 +73,9 @@ extension WhisperApiExtension on Whisper {
     "format",
     directory.path,
   ]);
+  Process.runSync("dart", [
+    "format",
+    directory_api.path,
+  ]);
 }
 
