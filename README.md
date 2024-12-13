@@ -14,7 +14,7 @@ Library ini di buat 100% tanpa menjiplak kode orang lain, jika anda ingin featur
 ## Status
 
 
-## Version 1.6.2
+## Version 1.7.2
 
 ## Features
 
