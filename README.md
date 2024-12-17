@@ -1,5 +1,5 @@
 # Whisper
-
+ 
 Whisper adalah sebuah library opensource milik open ai yang berguna untuk mengubah / mendapatkan text dari sebuah audio
 
 
