@@ -1,3 +1,9 @@
+## NEWS
+
+there is someone crazy who made a repo with the same code, but did not credit my name / username
+
+so I stopped this library completely
+
 # Whisper
 
 Whisper adalah sebuah library opensource milik open ai yang berguna untuk mengubah / mendapatkan text dari sebuah audio
