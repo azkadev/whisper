@@ -62,13 +62,14 @@ class Whisper {
   bool _isEnsureInitialized = false;
 
   late final WhisperRequestNative whisper_request_native_function;
-
+  String whisperLibraryPath = "libwhisper.so";
   void ensureInitialized({
     String whisperLibraryPath = "libwhisper.so",
   }) {
     if (_isEnsureInitialized) {
       return;
     }
+    this.whisperLibraryPath = whisperLibraryPath;
     _isEnsureInitialized = true;
     try {
       whisperLibrary = DynamicLibrary.open(whisperLibraryPath);
@@ -81,9 +82,9 @@ class Whisper {
   WhisperResponse request({
     required WhisperRequest whisperRequest,
   }) {
+    if (_isEnsureInitialized) {}
     final whisper_request_utf = whisperRequest.toString().toNativeUtf8();
     whisper_request_native_function(whisper_request_utf);
-
     try {
       final res = whisper_request_native_function(whisper_request_utf);
       return WhisperResponse(json.decode(res.toDartString()));
