@@ -82,7 +82,13 @@ class Whisper {
   WhisperResponse request({
     required WhisperRequest whisperRequest,
   }) {
-    if (_isEnsureInitialized) {}
+    if (_isEnsureInitialized == false) {
+      return WhisperResponse({
+        "@type": "error",
+        "message": "uncomplete_initialized"
+      });
+
+    }
     final whisper_request_utf = whisperRequest.toString().toNativeUtf8();
     whisper_request_native_function(whisper_request_utf);
     try {
