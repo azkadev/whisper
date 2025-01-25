@@ -36,9 +36,11 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 <!-- END LICENSE --> */
 // ignore_for_file: non_constant_identifier_names
 
+import 'dart:async';
 import 'dart:convert';
 import 'dart:ffi';
 import 'dart:io';
+import 'dart:isolate';
 
 import 'package:ffi/ffi.dart';
 import 'package:general_lib/log/log.dart';
@@ -79,7 +81,7 @@ class Whisper {
     }
   }
 
-  WhisperResponse request({
+  WhisperResponse requestRaw({
     required WhisperRequest whisperRequest,
   }) {
     if (_isEnsureInitialized == false) {
@@ -104,6 +106,27 @@ class Whisper {
       );
       return WhisperResponse({"@type": "error", "message": "${e.toString()}"});
     }
+  }
+
+  FutureOr<WhisperResponse> request({
+    required WhisperRequest whisperRequest,
+    bool isInIsolate = false,
+  }) async {
+    if (isInIsolate) {
+      final String whisperLibraryPath = this.whisperLibraryPath;
+      return await Isolate.run(() async {
+        final Whisper whisper = Whisper();
+        whisper.ensureInitialized(
+          whisperLibraryPath: whisperLibraryPath,
+        );
+        final result = await whisper.request(
+          whisperRequest: whisperRequest,
+        );
+        whisper.whisperLibrary.close();
+        return result;
+      });
+    }
+    return requestRaw(whisperRequest: whisperRequest);
   }
 }
 

@@ -39,7 +39,7 @@ import 'dart:io';
  import 'package:general_lib/general_lib.dart';
  import 'package:whisper_dart/whisper_dart.dart'; 
 
-void main(List<String> arguments) {
+void main(List<String> arguments)async {
   DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
@@ -49,12 +49,13 @@ void main(List<String> arguments) {
     whisperLibraryPath: "native_lib/whisper_dart.so",
   );
   try {
-    var res = whisper.request(
+    var res = await whisper.request(
       whisperRequest: WhisperRequest.fromWavFile( 
         audio: File("samples/jfk.wav"),
         model: File("models/ggml-small.bin"),
         language: "en",
       ),
+      isInIsolate: true,
     );
     print(res.toString());
     print(convertToAgo(time.millisecondsSinceEpoch));
