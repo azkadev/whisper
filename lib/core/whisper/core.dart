@@ -83,18 +83,15 @@ class Whisper {
     required WhisperRequest whisperRequest,
   }) {
     if (_isEnsureInitialized == false) {
-      return WhisperResponse({
-        "@type": "error",
-        "message": "uncomplete_initialized"
-      });
-
+      return WhisperResponse({"@type": "error", "message": "uncomplete_initialized"});
     }
     final whisper_request_utf = whisperRequest.toString().toNativeUtf8();
-    whisper_request_native_function(whisper_request_utf);
     try {
       final res = whisper_request_native_function(whisper_request_utf);
+      malloc.free(whisper_request_utf);
       return WhisperResponse(json.decode(res.toDartString()));
     } catch (e, stack) {
+      malloc.free(whisper_request_utf);
       generalLibraryLog.printToTerminal(
         logMessage: GeneralLibraryLogMessage(
           value: e,

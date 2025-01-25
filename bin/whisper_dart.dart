@@ -34,16 +34,19 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 <!-- END LICENSE --> */
 // ignore_for_file: non_constant_identifier_names
 
-import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:universal_io/io.dart';
-import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
+import 'dart:io';
+
+ import 'package:general_lib/general_lib.dart';
+ import 'package:whisper_dart/whisper_dart.dart'; 
 
 void main(List<String> arguments) {
   DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
-    whisperLib: "native_lib/whisper_dart.so",
+  );
+  whisper.ensureInitialized(
+
+    whisperLibraryPath: "native_lib/whisper_dart.so",
   );
   try {
     var res = whisper.request(
