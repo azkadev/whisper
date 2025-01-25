@@ -52,27 +52,61 @@ I only have this device, so sorry I can't test other devices
 ## example
 example dengan auto convert dari semua jenis audio ke wav whisper, `ffmpeg` harus terinstall
 ```dart
+/* <!-- START LICENSE -->
+
+
+This Software / Program / Source Code Created By Developer From Company GLOBAL CORPORATION
+Social Media:
+
+   - Youtube: https://youtube.com/@Global_Corporation 
+   - Github: https://github.com/globalcorporation
+   - TELEGRAM: https://t.me/GLOBAL_CORP_ORG_BOT
+
+All code script in here created 100% original without copy / steal from other code if we copy we add description source at from top code
+
+If you wan't edit you must add credit me (don't change)
+
+If this Software / Program / Source Code has you
+
+Jika Program ini milik anda dari hasil beli jasa developer di (Global Corporation / apapun itu dari turunan itu jika ada kesalahan / bug / ingin update segera lapor ke sub)
+
+Misal anda beli Beli source code di Slebew CORPORATION anda lapor dahulu di slebew jangan lapor di GLOBAL CORPORATION!
+
+Jika ada kendala program ini (Pastikan sebelum deal project tidak ada negosiasi harga)
+Karena jika ada negosiasi harga kemungkinan
+
+1. Software Ada yang di kurangin
+2. Informasi tidak lengkap
+3. Bantuan Tidak Bisa remote / full time (Ada jeda)
+
+Sebelum program ini sampai ke pembeli developer kami sudah melakukan testing
+
+jadi sebelum nego kami sudah melakukan berbagai konsekuensi jika nego tidak sesuai ? 
+Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba tiba di potong akhirnya bantuan / software kadang tidak lengkap
+
+
+<!-- END LICENSE --> */
 // ignore_for_file: non_constant_identifier_names
-import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:universal_io/io.dart';
-import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
+
+import 'dart:io';
+
+ import 'package:general_lib/general_lib.dart';
+ import 'package:whisper_dart/whisper_dart.dart'; 
 
 void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
+  DateTime time = DateTime.now();
   // print(res);
   Whisper whisper = Whisper(
-    whisperLib: "whisper.cpp/whisper.so",
+  );
+  whisper.ensureInitialized(
+    whisperLibraryPath: "native_lib/whisper_dart.so",
   );
   try {
     var res = whisper.request(
-      whisperRequest: WhisperRequest.fromWavFile(
-        /// auto convert to wav 16 
-        audio: WhisperAudioconvert.convert(
-          audioInput: File("samples/audio.ogg"),
-          audioOutput: File("samples/output.wav"),
-        ),
-        model: File("models/ggml-model-whisper-small.bin"),
+      whisperRequest: WhisperRequest.fromWavFile( 
+        audio: File("samples/jfk.wav"),
+        model: File("models/ggml-small.bin"),
+        language: "en",
       ),
     );
     print(res.toString());
@@ -90,44 +124,8 @@ result
 }
 ```
 
-## example 2
-
-example convert audio to text without auto convert
-```dart
-// ignore_for_file: non_constant_identifier_names
-import 'package:galaxeus_lib/galaxeus_lib.dart';
-import 'package:universal_io/io.dart';
-import 'package:whisper_dart/whisper_dart.dart';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
-
-void main(List<String> arguments) {
-  DateTime time = DateTime.now(); 
-  // print(res);
-  Whisper whisper = Whisper(
-    whisperLib: "whisper.cpp/whisper.so",
-  );
-  try {
-    var res = whisper.request(
-      whisperRequest: WhisperRequest.fromWavFile(
-        audio: File("samples/output.wav"),
-        model: File("models/ggml-model-whisper-small.bin"),
-      ),
-    );
-    print(res.toString());
-    print(convertToAgo(time.millisecondsSinceEpoch));
-  } catch (e) {
-    print(e);
-  }
-}
-```
-
-result
-```json
-{
-  "@type":"transcribe",
-  "text":" And so my fellow Americans, ask not what your country can do for you, ask what you can do for your country."
-}
-```
+## Assets
+- [Models](https://huggingface.co/ggerganov/whisper.cpp/tree/main)
 
 Language Support 
 
