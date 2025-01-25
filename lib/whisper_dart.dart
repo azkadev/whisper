@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs
+
 /* <!-- START LICENSE -->
 
 
@@ -36,9 +38,9 @@ Bukan maksud kami menipu itu karena harga yang sudah di kalkulasi + bantuan tiba
 
 import 'dart:convert';
 import 'dart:ffi';
-import 'package:ffmpeg_dart/ffmpeg_dart.dart';
-import 'package:universal_io/io.dart';
-
+import 'dart:io';
+import 'ffmpeg.dart';
+ 
 import 'package:ffi/ffi.dart';
 
 // ignore: camel_case_types
