@@ -50,13 +50,10 @@ void main(List<String> arguments) {
   );
   try {
     var res = whisper.request(
-      whisperRequest: WhisperRequest.fromWavFile(
-        // audio: WhisperAudioconvert.convert(
-        //   audioInput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/audio.ogg"),
-        //   audioOutput: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        // ),
-        audio: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/samples/output.wav"),
-        model: File("/home/hexaminate/Documents/HEXAMINATE/app/ai/whisper_dart/models/ggml-model-whisper-small.bin"),
+      whisperRequest: WhisperRequest.fromWavFile( 
+        audio: File("samples/jfk.wav"),
+        model: File("models/ggml-small.bin"),
+        language: "en",
       ),
     );
     print(res.toString());
