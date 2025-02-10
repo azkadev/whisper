@@ -4,6 +4,13 @@ there is someone crazy who made a repo with the same code, but did not credit my
 
 so I stopped this library completely
 
+but it's a lie:V .
+but about someone who copied the clone and threw away my name, it's true and the library is stuck in the old version Awokeowkodkwodkwow
+
+so for those of you who still want to use the library, check this library:
+
+[General-Developer/whisper_library](https://github.com/General-Developer/whisper_library)
+
 # Whisper
 
 Whisper adalah sebuah library opensource milik open ai yang berguna untuk mengubah / mendapatkan text dari sebuah audio
